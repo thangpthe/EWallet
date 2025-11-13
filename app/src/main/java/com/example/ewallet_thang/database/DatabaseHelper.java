@@ -123,7 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_PHONE, phone);
         values.put(COL_BIRTH_DATE, birthDate);
         values.put(COL_PASSWORD, hashPassword(password));
-        values.put(COL_BALANCE, 0.0);
+        values.put(COL_BALANCE, 10000000.0);
 
         long result = db.insert(TABLE_USERS, null, values);
         db.close();
@@ -305,5 +305,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         COL_TRANS_TYPE + "='EXPENSE' " +
                         "GROUP BY " + COL_TRANS_CATEGORY,
                 new String[]{String.valueOf(userId)});
+    }
+    public Cursor getAllUsers() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_USERS + " ORDER BY " + COL_FIRST_NAME + " ASC";
+        return db.rawQuery(query, null);
     }
 }

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:gravity="center"
+    android:padding="32dp">
+
+    <!-- Success Icon -->
+    <TextView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:text="✓"
+        android:gravity="center"
+        android:textSize="48sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:background="@drawable/circle_success"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Success Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chuyển tiền thành công"
+        android:textColor="#333333"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- Transaction Details Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#F5F5F5"
+        android:layout_marginBottom="32dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Recipient -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Người nhận"
+                    android:textColor="#757575"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvRecipientName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="tới NGUYEN VAN A"
+                    android:textColor="#333333"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <!-- Amount -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Số tiền"
+                    android:textColor="#757575"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="500,000 ₫"
+                    android:textColor="#F44336"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <!-- Date -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ngày thực hiện"
+                    android:textColor="#757575"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="28/09/2025"
+                    android:textColor="#333333"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <!-- Category -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ghi chú"
+                    android:textColor="#757575"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chuyển tiền"
+                    android:textColor="#333333"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Buttons -->
+    <Button
+        android:id="@+id/btnViewTransaction"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Thực hiện giao dịch khác"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@drawable/button_secondary"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btnBackToHome"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="In biên lai"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@drawable/button_primary"/>
+
+</LinearLayout>

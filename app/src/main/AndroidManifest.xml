@@ -30,6 +30,31 @@
         </activity>
         <activity android:name=".RegisterActivity"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"/>
+
+        <activity
+            android:name=".TransferActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"/>
+
+        <activity
+            android:name=".TransferConfirmActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"/>
+
+        <activity
+            android:name=".TransferSuccessActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"/>
+
+        <activity
+            android:name=".TopUpActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.EWallet_Thang" />
+
+        <activity
+            android:name=".TopUpSuccessActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.EWallet_Thang" />
     </application>
 
 </manifest>

@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToMain() {
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        Intent intent = new Intent(LoginActivity.this, com.example.ewallet_thang.MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

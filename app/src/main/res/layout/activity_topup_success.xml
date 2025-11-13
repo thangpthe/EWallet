@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <!-- Success Icon -->
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_success"
+        android:contentDescription="Success"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Success Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nạp tiền thành công"
+        android:textColor="#333333"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- Transaction Details Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Bank -->
+            <TextView
+                android:id="@+id/tvBank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ngân hàng Vietcombank"
+                android:textColor="#333333"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Amount -->
+            <TextView
+                android:id="@+id/tvAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="500,000"
+                android:textColor="#2196F3"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Date Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ngày thực hiện"
+                android:textColor="#757575"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp"/>
+
+            <!-- Date Value -->
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="28/09/2025"
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Note Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ghi chú"
+                android:textColor="#757575"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp"/>
+
+            <!-- Note Value -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nạp tiền"
+                android:textColor="#333333"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Back Button -->
+    <Button
+        android:id="@+id/btnBackToHome"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Quay lại"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@drawable/button_back"/>
+
+</LinearLayout>

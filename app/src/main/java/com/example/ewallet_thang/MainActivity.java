@@ -1,4 +1,4 @@
-package com.example.ewallet;
+package com.example.ewallet_thang;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.ewallet_thang.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -82,11 +84,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-//        cardSend.setOnClickListener(v -> {
-//            Intent intent = new Intent(MainActivity.this, TransferActivity.class);
-//            startActivity(intent);
-//        });
-//
+        // ACTIVATED: Transfer functionality
+        cardSend.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, TransferActivity.class);
+            startActivity(intent);
+        });
+
+        // ACTIVATED: Top Up functionality
+        cardTopUp.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, TopUpActivity.class);
+            startActivity(intent);
+        });
+        // TODO: Implement other features
 //        cardReceive.setOnClickListener(v -> {
 //            Intent intent = new Intent(MainActivity.this, ReceiveActivity.class);
 //            startActivity(intent);

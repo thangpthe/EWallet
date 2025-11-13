@@ -24,6 +24,7 @@
                 android:padding="24dp">
 
                 <TextView
+                    android:layout_marginTop="25dp"
                     android:id="@+id/tvUserName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -57,7 +58,7 @@
                             android:id="@+id/tvBalance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0 ₫"
+                            android:text="10.000.000 ₫"
                             android:textColor="#2196F3"
                             android:textSize="32sp"
                             android:textStyle="bold"
@@ -341,20 +342,18 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add"
-        app:tint="#FFFFFF"
         app:backgroundTint="#2196F3"
-        app:layout_anchor="@id/bottomNav"
-        app:layout_anchorGravity="top|end"/>
+        app:layout_anchor="@+id/bottomNav"
+        app:layout_anchorGravity="top|center"
+        app:tint="#FFFFFF" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="#FFFFFF"
-
-        android:fitsSystemWindows="true"
-
+        android:paddingBottom="8dp"
         app:menu="@menu/bottom_nav_menu"
         app:itemIconTint="@color/bottom_nav_color"
         app:itemTextColor="@color/bottom_nav_color"
