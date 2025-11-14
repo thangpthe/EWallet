@@ -210,6 +210,27 @@ public class TransferConfirmActivity extends AppCompatActivity {
                 selectedCategory
         );
 
+        if (senderTransactionId != -1) {
+            dbHelper.addNotification(
+                    currentUserId,
+                    "Chi tiêu", // Title
+                    "- " + currencyFormat.format(amount), // Message (chỉ là số tiền)
+                    "EXPENSE", // Type
+                    (int) senderTransactionId
+            );
+        }
+
+        if (recipientTransactionId != -1) {
+            // Tạo thông báo "Thu nhập" cho người nhận
+            dbHelper.addNotification(
+                    recipientId,
+                    "Thu nhập", // Title
+                    "+ " + currencyFormat.format(amount), // Message (chỉ là số tiền)
+                    "INCOME", // Type
+                    (int) recipientTransactionId
+            );
+        }
+
         // Kiểm tra kết quả
         if (senderTransactionId > 0 && recipientTransactionId > 0) {
             // Cập nhật số dư trong SharedPreferences

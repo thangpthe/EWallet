@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,13 +45,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         // Set transaction icon based on type
         if (transaction.isIncome()) {
-            holder.tvIcon.setText("↓");
-            holder.tvIcon.setBackgroundResource(R.drawable.circle_income);
             holder.tvAmount.setTextColor(context.getResources().getColor(R.color.green));
             holder.tvAmount.setText("+" + currencyFormat.format(transaction.getAmount()));
         } else {
-            holder.tvIcon.setText("↑");
-            holder.tvIcon.setBackgroundResource(R.drawable.circle_expense);
             holder.tvAmount.setTextColor(context.getResources().getColor(R.color.red));
             holder.tvAmount.setText("-" + currencyFormat.format(transaction.getAmount()));
         }
@@ -82,11 +79,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     }
 
     public static class TransactionViewHolder extends RecyclerView.ViewHolder {
-        TextView tvIcon, tvDescription, tvCategory, tvAmount, tvDate, tvTime;
+        TextView tvDescription, tvCategory, tvAmount, tvDate, tvTime;
 
         public TransactionViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvIcon = itemView.findViewById(R.id.tvTransactionIcon);
             tvDescription = itemView.findViewById(R.id.tvTransactionDescription);
             tvCategory = itemView.findViewById(R.id.tvTransactionCategory);
             tvAmount = itemView.findViewById(R.id.tvTransactionAmount);

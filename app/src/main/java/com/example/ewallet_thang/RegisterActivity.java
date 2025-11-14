@@ -169,9 +169,15 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         // Register user
+        // Register user
         long result = dbHelper.registerUser(firstName, lastName, phone, birthDate, password);
 
         if (result != -1) {
+            dbHelper.addNotification((int) result,
+                    "Chào mừng đến với E-Wallet!",
+                    "Cảm ơn bạn đã đăng ký. Hãy bắt đầu quản lý tài chính của bạn ngay hôm nay!",
+                    "SYSTEM",
+                    0);
             Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
             finish();
         } else {

@@ -26,7 +26,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private TextView tvUserName, tvBalance, tvTotalIncome, tvTotalExpense;
-    private MaterialCardView cardSend, cardReceive, cardTopUp, cardWithdraw;
+    private MaterialCardView cardSend, cardReceive, cardHistory;
     private RecyclerView rvRecentTransactions;
     private FloatingActionButton fabAddTransaction;
     private BottomNavigationView bottomNav;
@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
         cardSend = findViewById(R.id.cardSend);
         cardReceive = findViewById(R.id.cardReceive);
-        cardTopUp = findViewById(R.id.cardTopUp);
-        cardWithdraw = findViewById(R.id.cardWithdraw);
+        cardHistory = findViewById(R.id.cardHistory);
+        bottomNav = findViewById(R.id.bottomNav);
 
         rvRecentTransactions = findViewById(R.id.rvRecentTransactions);
         fabAddTransaction = findViewById(R.id.fabAddTransaction);
@@ -83,6 +83,17 @@ public class MainActivity extends AppCompatActivity {
         rvRecentTransactions.setAdapter(transactionAdapter);
     }
 
+    private void updateNotificationBadge() {
+        int unreadCount = dbHelper.getUnreadNotificationCount(userId);
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+
+        if (unreadCount > 0) {
+            bottomNav.getOrCreateBadge(R.id.nav_notification).setNumber(unreadCount);
+        } else {
+            bottomNav.removeBadge(R.id.nav_notification);
+        }
+    }
+
     private void setupListeners() {
         // ACTIVATED: Transfer functionality
         cardSend.setOnClickListener(v -> {
@@ -91,32 +102,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // ACTIVATED: Top Up functionality
-        cardTopUp.setOnClickListener(v -> {
+//        cardTopUp.setOnClickListener(v -> {
+//            Intent intent = new Intent(MainActivity.this, TopUpActivity.class);
+//            startActivity(intent);
+//        });
+        // TODO: Implement other features
+        cardReceive.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, TopUpActivity.class);
             startActivity(intent);
         });
-        // TODO: Implement other features
-//        cardReceive.setOnClickListener(v -> {
-//            Intent intent = new Intent(MainActivity.this, ReceiveActivity.class);
-//            startActivity(intent);
-//        });
 //
-//        cardTopUp.setOnClickListener(v -> {
-//            Intent intent = new Intent(MainActivity.this, AddTransactionActivity.class);
-//            intent.putExtra("type", "DEPOSIT");
-//            startActivity(intent);
-//        });
-//
-//        cardWithdraw.setOnClickListener(v -> {
-//            Intent intent = new Intent(MainActivity.this, AddTransactionActivity.class);
-//            intent.putExtra("type", "WITHDRAW");
-//            startActivity(intent);
-//        });
-//
-//        fabAddTransaction.setOnClickListener(v -> {
-//            Intent intent = new Intent(MainActivity.this, AddTransactionActivity.class);
-//            startActivity(intent);
-//        });
 
         bottomNav.setOnItemSelectedListener(this::onNavigationItemSelected);
     }
@@ -124,26 +119,21 @@ public class MainActivity extends AppCompatActivity {
     private boolean onNavigationItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
-//        if (itemId == R.id.nav_home) {
-//            return true;
-//        } else if (itemId == R.id.nav_transactions) {
-//            Intent intent = new Intent(MainActivity.this, TransactionsActivity.class);
-//            startActivity(intent);
-//            return true;
-//        } else if (itemId == R.id.nav_cards) {
-//            Intent intent = new Intent(MainActivity.this, CardsActivity.class);
-//            startActivity(intent);
-//            return true;
-//        } else if (itemId == R.id.nav_statistics) {
-//            Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
-//            startActivity(intent);
-//            return true;
-//        } else if (itemId == R.id.nav_profile) {
-//            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-//            startActivity(intent);
-//            return true;
-//        }
-
+        if (itemId == R.id.nav_home) {
+            return true;
+        } else if (itemId == R.id.nav_notification) {
+            Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (itemId == R.id.nav_statistics) {
+            Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
+            startActivity(intent);
+            return true;
+        }else if (itemId == R.id.nav_profile) {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+            return true;
+        }
         return false;
     }
 
@@ -153,11 +143,9 @@ public class MainActivity extends AppCompatActivity {
 
         tvUserName.setText("Xin chào, " + firstName + " " + lastName);
 
-        // Load balance
         double balance = dbHelper.getBalance(userId);
         tvBalance.setText(currencyFormat.format(balance));
 
-        // Update SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putFloat("balance", (float) balance);
         editor.apply();
@@ -178,8 +166,7 @@ public class MainActivity extends AppCompatActivity {
         if (cursor != null && cursor.moveToFirst()) {
             int count = 0;
             do {
-                if (count >= 5) break; // Show only 5 recent transactions
-
+                if (count >= 5) break;
                 int id = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_TRANS_ID));
                 String type = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_TRANS_TYPE));
                 double amount = cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_TRANS_AMOUNT));
@@ -211,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         loadUserData();
         loadRecentTransactions();
+        updateNotificationBadge();
     }
 
     @Override

@@ -28,7 +28,6 @@ public class TransferSuccessActivity extends AppCompatActivity {
         loadTransferData();
         setupListeners();
 
-        // ✅ Thay thế onBackPressed() bằng OnBackPressedDispatcher
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {

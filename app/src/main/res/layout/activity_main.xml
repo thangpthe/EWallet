@@ -134,15 +134,6 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Thao tác nhanh"
-                    android:textColor="#333333"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp"/>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -153,35 +144,34 @@
                         android:id="@+id/cardSend"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_margin="4dp"
+                        android:layout_weight="1"
                         app:cardCornerRadius="12dp"
                         app:cardElevation="4dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:orientation="vertical"
-                            android:padding="16dp"
-                            android:gravity="center">
+                            android:padding="16dp">
 
-                            <TextView
+                            <ImageView
                                 android:layout_width="48dp"
                                 android:layout_height="48dp"
-                                android:text="↑"
-                                android:gravity="center"
-                                android:textSize="24sp"
-                                android:textColor="#FFFFFF"
-                                android:background="@drawable/circle_send"/>
+                                android:background="@drawable/circle_send"
+                                android:padding="12dp"
+                                android:scaleType="center"
+                                android:src="@drawable/ic_expense" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Chuyển"
-                                android:textSize="12sp"
-                                android:textColor="#333333"
                                 android:layout_marginTop="8dp"
-                                android:textAlignment="center"/>
+                                android:text="Chuyển"
+                                android:textAlignment="center"
+                                android:textColor="#333333"
+                                android:textSize="12sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -189,109 +179,73 @@
                         android:id="@+id/cardReceive"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_margin="4dp"
+                        android:layout_weight="1"
                         app:cardCornerRadius="12dp"
                         app:cardElevation="4dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:orientation="vertical"
-                            android:padding="16dp"
-                            android:gravity="center">
+                            android:padding="16dp">
 
-                            <TextView
+                            <ImageView
                                 android:layout_width="48dp"
                                 android:layout_height="48dp"
-                                android:text="↓"
-                                android:gravity="center"
-                                android:textSize="24sp"
-                                android:textColor="#FFFFFF"
-                                android:background="@drawable/circle_receive"/>
+                                android:background="@drawable/circle_income"
+                                android:padding="12dp"
+                                android:scaleType="center"
+                                android:src="@drawable/ic_deposit" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Nhận"
-                                android:textSize="12sp"
-                                android:textColor="#333333"
                                 android:layout_marginTop="8dp"
-                                android:textAlignment="center"/>
+                                android:text="Nạp tiền"
+                                android:textAlignment="center"
+                                android:textColor="#333333"
+                                android:textSize="12sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardTopUp"
+                        android:id="@+id/cardHistory"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_margin="4dp"
+                        android:layout_weight="1"
                         app:cardCornerRadius="12dp"
                         app:cardElevation="4dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:orientation="vertical"
-                            android:padding="16dp"
-                            android:gravity="center">
+                            android:padding="16dp">
 
-                            <TextView
+                            <ImageView
                                 android:layout_width="48dp"
                                 android:layout_height="48dp"
-                                android:text="+"
-                                android:gravity="center"
-                                android:textSize="24sp"
-                                android:textColor="#FFFFFF"
-                                android:background="@drawable/circle_topup"/>
+                                android:background="@drawable/circle_avatar"
+                                android:padding="12dp"
+                                android:scaleType="center"
+                                android:src="@drawable/ic_history" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Nạp"
-                                android:textSize="12sp"
-                                android:textColor="#333333"
                                 android:layout_marginTop="8dp"
-                                android:textAlignment="center"/>
+                                android:text="Lịch sử"
+                                android:textAlignment="center"
+                                android:textColor="#333333"
+                                android:textSize="12sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardWithdraw"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_margin="4dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="4dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="16dp"
-                            android:gravity="center">
-
-                            <TextView
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:text="-"
-                                android:gravity="center"
-                                android:textSize="24sp"
-                                android:textColor="#FFFFFF"
-                                android:background="@drawable/circle_withdraw"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Rút"
-                                android:textSize="12sp"
-                                android:textColor="#333333"
-                                android:layout_marginTop="8dp"
-                                android:textAlignment="center"/>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </LinearLayout>
 

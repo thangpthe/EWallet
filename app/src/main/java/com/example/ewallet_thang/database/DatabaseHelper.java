@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "EWallet.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     // Table Users
     public static final String TABLE_USERS = "users";
@@ -42,6 +42,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_CARD_HOLDER = "card_holder";
     public static final String COL_CARD_TYPE = "card_type";
     public static final String COL_CARD_EXPIRY = "expiry_date";
+
+    //Table Notification
+    public static final String TABLE_NOTIFICATIONS = "Notifications";
+    public static final String COL_NOTI_ID = "notification_id";
+    public static final String COL_NOTI_USER_ID = "user_id";
+    public static final String COL_NOTI_TITLE = "title";
+    public static final String COL_NOTI_MESSAGE = "message";
+    public static final String COL_NOTI_TYPE = "type";
+    public static final String COL_NOTI_DATE = "date";
+    public static final String COL_NOTI_IS_READ = "is_read";
+    public static final String COL_NOTI_RELATED_ID = "related_id";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -85,6 +96,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(" + COL_CARD_USER_ID + ") REFERENCES " +
                 TABLE_USERS + "(" + COL_USER_ID + "))";
         db.execSQL(createCardsTable);
+
+        String CREATE_NOTIFICATIONS_TABLE = "CREATE TABLE " + TABLE_NOTIFICATIONS + " (" +
+                COL_NOTI_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_NOTI_USER_ID + " INTEGER NOT NULL, " +
+                COL_NOTI_TITLE + " TEXT NOT NULL, " +
+                COL_NOTI_MESSAGE + " TEXT NOT NULL, " +
+                COL_NOTI_TYPE + " TEXT NOT NULL, " +
+                COL_NOTI_DATE + " DATETIME DEFAULT CURRENT_TIMESTAMP, " +
+                COL_NOTI_IS_READ + " INTEGER DEFAULT 0, " +
+                COL_NOTI_RELATED_ID + " INTEGER DEFAULT 0, " +
+                "FOREIGN KEY(" + COL_NOTI_USER_ID + ") REFERENCES " + TABLE_USERS + "(" + COL_USER_ID + "))";
+        db.execSQL(CREATE_NOTIFICATIONS_TABLE);
+
     }
 
     @Override
@@ -92,6 +116,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRANSACTIONS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CARDS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
         onCreate(db);
     }
 
@@ -126,7 +151,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_BALANCE, 10000000.0);
 
         long result = db.insert(TABLE_USERS, null, values);
-        db.close();
         return result;
     }
 
@@ -137,7 +161,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null, null, null);
         boolean exists = cursor.getCount() > 0;
         cursor.close();
-        db.close();
         return exists;
     }
 
@@ -156,17 +179,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null, null, null);
     }
 
-    public boolean updateBalance(int userId, double newBalance) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_BALANCE, newBalance);
-
-        int result = db.update(TABLE_USERS, values,
-                COL_USER_ID + "=?", new String[]{String.valueOf(userId)});
-        db.close();
-        return result > 0;
-    }
-
+    // Đảm bảo method getBalance() KHÔNG đóng database
     public double getBalance(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_USERS, new String[]{COL_BALANCE},
@@ -174,15 +187,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null, null, null);
 
         double balance = 0.0;
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             balance = cursor.getDouble(0);
+            cursor.close();
         }
-        cursor.close();
-        db.close();
         return balance;
     }
 
-    // Transaction Operations
+    // Đảm bảo addTransaction() cập nhật balance đúng
     public long addTransaction(int userId, String type, double amount,
                                String description, String category) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -195,16 +207,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_TRANSACTIONS, null, values);
 
-        // Update user balance
-        double currentBalance = getBalance(userId);
-        if (type.equals("INCOME") || type.equals("DEPOSIT")) {
-            updateBalance(userId, currentBalance + amount);
-        } else if (type.equals("EXPENSE") || type.equals("WITHDRAW")) {
-            updateBalance(userId, currentBalance - amount);
-        }
+        // ✅ CẬP NHẬT BALANCE NGAY SAU KHI TẠO TRANSACTION
+        if (result != -1) {
+            double currentBalance = getBalance(userId);
+            double newBalance = currentBalance;
 
-        db.close();
+            if (type.equals("INCOME") || type.equals("DEPOSIT")) {
+                newBalance = currentBalance + amount;
+            } else if (type.equals("EXPENSE") || type.equals("WITHDRAW")) {
+                newBalance = currentBalance - amount;
+            }
+
+            updateBalance(userId, newBalance);
+        }
         return result;
+    }
+
+    // Đảm bảo updateBalance() không đóng database
+    public boolean updateBalance(int userId, double newBalance) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_BALANCE, newBalance);
+
+        int result = db.update(TABLE_USERS, values,
+                COL_USER_ID + "=?", new String[]{String.valueOf(userId)});
+
+        return result > 0;
     }
 
     public Cursor getAllTransactions(int userId) {
@@ -242,7 +270,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_CARD_EXPIRY, expiryDate);
 
         long result = db.insert(TABLE_CARDS, null, values);
-        db.close();
         return result;
     }
 
@@ -257,7 +284,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         int result = db.delete(TABLE_CARDS,
                 COL_CARD_ID + "=?", new String[]{String.valueOf(cardId)});
-        db.close();
         return result > 0;
     }
 
@@ -275,7 +301,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             total = cursor.getDouble(0);
         }
         cursor.close();
-        db.close();
         return total;
     }
 
@@ -292,7 +317,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             total = cursor.getDouble(0);
         }
         cursor.close();
-        db.close();
         return total;
     }
 
@@ -311,4 +335,83 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + TABLE_USERS + " ORDER BY " + COL_FIRST_NAME + " ASC";
         return db.rawQuery(query, null);
     }
+
+
+    public long addNotification(int userId, String title, String message, String type, int relatedId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_NOTI_USER_ID, userId);
+        values.put(COL_NOTI_TITLE, title);
+        values.put(COL_NOTI_MESSAGE, message);
+        values.put(COL_NOTI_TYPE, type);
+        values.put(COL_NOTI_RELATED_ID, relatedId);
+        return db.insert(TABLE_NOTIFICATIONS, null, values);
+    }
+
+    // Lấy tất cả thông báo
+    public Cursor getAllNotifications(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(TABLE_NOTIFICATIONS, null,
+                COL_NOTI_USER_ID + "=?",
+                new String[]{String.valueOf(userId)},
+                null, null, COL_NOTI_DATE + " DESC");
+    }
+
+    // Đánh dấu đã đọc
+    public void markNotificationAsRead(int notificationId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_NOTI_IS_READ, 1);
+        db.update(TABLE_NOTIFICATIONS, values,
+                COL_NOTI_ID + "=?",
+                new String[]{String.valueOf(notificationId)});
+    }
+
+    // Đánh dấu tất cả đã đọc
+    public void markAllNotificationsAsRead(int userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_NOTI_IS_READ, 1);
+        db.update(TABLE_NOTIFICATIONS, values,
+                COL_NOTI_USER_ID + "=?",
+                new String[]{String.valueOf(userId)});
+    }
+
+    // Đếm thông báo chưa đọc
+    public int getUnreadNotificationCount(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NOTIFICATIONS, null,
+                COL_NOTI_USER_ID + "=? AND " + COL_NOTI_IS_READ + "=0",
+                new String[]{String.valueOf(userId)},
+                null, null, null);
+        int count = cursor != null ? cursor.getCount() : 0;
+        if (cursor != null) cursor.close();
+        return count;
+    }
+
+    public boolean updatePassword(int userId, String newPassword) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_PASSWORD, hashPassword(newPassword));
+
+        int result = db.update(TABLE_USERS, values,
+                COL_USER_ID + "=?",
+                new String[]{String.valueOf(userId)});
+
+        return result > 0;
+    }
+    // Tạo thông báo mẫu
+//    public void createSampleNotifications(int userId) {
+//        addNotification(userId, "Chào mừng!",
+//                "Chào mừng bạn đến với E-Wallet. Bắt đầu quản lý tài chính của bạn ngay hôm nay!",
+//                "SYSTEM", 0);
+//        addNotification(userId, "Giao dịch thành công",
+//                "Bạn vừa nạp tiền thành công 500.000đ",
+//                "TRANSACTION", 0);
+//        addNotification(userId, "Khuyến mãi đặc biệt",
+//                "Nhận ngay 100.000đ khi giới thiệu bạn bè!",
+//                "PROMOTION", 0);
+//    }
+
+
 }

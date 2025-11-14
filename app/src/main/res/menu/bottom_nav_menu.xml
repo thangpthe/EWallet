@@ -5,19 +5,16 @@
         android:icon="@drawable/ic_home"
         android:title="Trang chủ"/>
     <item
-        android:id="@+id/nav_transactions"
-        android:icon="@drawable/ic_transactions"
-        android:title="Giao dịch"/>
-    <item
-        android:id="@+id/nav_cards"
-        android:icon="@drawable/ic_card"
-        android:title="Thẻ"/>
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_profile"
+        android:title="Tài khoản"/>
     <item
         android:id="@+id/nav_statistics"
         android:icon="@drawable/ic_statistics"
         android:title="Thống kê"/>
     <item
-        android:id="@+id/nav_profile"
-        android:icon="@drawable/ic_profile"
-        android:title="Tài khoản"/>
+        android:id="@+id/nav_notification"
+        android:icon="@drawable/ic_notification"
+        android:title="Thông báo"/>
+
 </menu>
