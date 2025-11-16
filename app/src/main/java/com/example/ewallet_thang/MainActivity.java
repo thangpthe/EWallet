@@ -73,8 +73,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNav = findViewById(R.id.bottomNav);
 
         rvRecentTransactions = findViewById(R.id.rvRecentTransactions);
-        fabAddTransaction = findViewById(R.id.fabAddTransaction);
-        bottomNav = findViewById(R.id.bottomNav);
+        //fabAddTransaction = findViewById(R.id.fabAddTransaction);
 
         // Setup RecyclerView
         transactionList = new ArrayList<>();
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateNotificationBadge() {
         int unreadCount = dbHelper.getUnreadNotificationCount(userId);
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
 
         if (unreadCount > 0) {
             bottomNav.getOrCreateBadge(R.id.nav_notification).setNumber(unreadCount);
@@ -102,16 +100,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // ACTIVATED: Top Up functionality
-//        cardTopUp.setOnClickListener(v -> {
-//            Intent intent = new Intent(MainActivity.this, TopUpActivity.class);
-//            startActivity(intent);
-//        });
-        // TODO: Implement other features
         cardReceive.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, TopUpActivity.class);
             startActivity(intent);
         });
-//
+
+        // ACTIVATED: Transaction History functionality
+        cardHistory.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, TransactionHistoryActivity.class);
+            startActivity(intent);
+        });
 
         bottomNav.setOnItemSelectedListener(this::onNavigationItemSelected);
     }
@@ -129,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
             startActivity(intent);
             return true;
-        }else if (itemId == R.id.nav_profile) {
+        } else if (itemId == R.id.nav_profile) {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
             return true;

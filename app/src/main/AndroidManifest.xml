@@ -67,6 +67,10 @@
             android:name=".ProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".TransactionHistoryActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.EWallet_Thang" />
     </application>
 
 </manifest>

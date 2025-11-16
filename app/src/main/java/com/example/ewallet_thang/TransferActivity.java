@@ -1,7 +1,10 @@
 package com.example.ewallet_thang;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,11 +14,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.ewallet_thang.database.DatabaseHelper;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -24,17 +32,25 @@ import java.util.Locale;
 
 public class TransferActivity extends AppCompatActivity {
 
-    private ImageView btnBack;
+    private static final int CAMERA_REQUEST_CODE = 1001;
+
+    private ImageView btnBack, ivScanQr;
     private TextView tvCurrentBalance;
     private EditText etSearch;
     private LinearLayout llRecipientList;
     private Button btnContinue;
+
     private DatabaseHelper dbHelper;
     private SharedPreferences sharedPreferences;
+
     private int currentUserId;
     private double currentBalance;
+
     private NumberFormat currencyFormat;
-    private List<RecipientUser> allRecipients;
+
+    private List<RecipientUser> allRecipients;       // User thật trong DB
+    private List<RecipientUser> defaultRecipients;  // 5 người mặc định
+    private List<RecipientUser> combinedList;       // Tổng hợp 2 nguồn
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,17 +59,25 @@ public class TransferActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
         sharedPreferences = getSharedPreferences("EWalletPrefs", MODE_PRIVATE);
+
         currentUserId = sharedPreferences.getInt("userId", -1);
         currentBalance = sharedPreferences.getFloat("balance", 0);
+
         currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 
         initViews();
         setupListeners();
-        loadSampleRecipients(); // Load 2 người dùng mẫu
+        loadDefaultRecipients();   // 🆕 THÊM 5 NGƯỜI MẶC ĐỊNH
+        loadRecipientsFromDB();    // Load user thật từ database
+        mergeLists();              // GỘP 2 LIST LẠI
+        renderAllRecipients(combinedList);
+
+        checkCameraPermission();
     }
 
     private void initViews() {
         btnBack = findViewById(R.id.btnBack);
+        ivScanQr = findViewById(R.id.ivScanQr);
         tvCurrentBalance = findViewById(R.id.tvCurrentBalance);
         etSearch = findViewById(R.id.etSearch);
         llRecipientList = findViewById(R.id.llRecipientList);
@@ -64,59 +88,100 @@ public class TransferActivity extends AppCompatActivity {
 
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
+        ivScanQr.setOnClickListener(v -> startQrScanner());
 
         etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void afterTextChanged(Editable s) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filterRecipients(s.toString());
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-
-        btnContinue.setOnClickListener(v -> {
-            // TODO: Add functionality if needed
         });
     }
 
-    private void loadSampleRecipients() {
+    private void checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.CAMERA},
+                    CAMERA_REQUEST_CODE
+            );
+        }
+    }
+
+    // =============================================================
+    // 🆕 THÊM 5 NGƯỜI MẶC ĐỊNH (KHÔNG PHỤ THUỘC DATABASE)
+    // =============================================================
+    private void loadDefaultRecipients() {
+        defaultRecipients = new ArrayList<>();
+
+        defaultRecipients.add(new RecipientUser(10001, "Nguyễn Minh", "Đức", "0901122334"));
+        defaultRecipients.add(new RecipientUser(10002, "Lê Hoàng", "Nam", "0902233445"));
+        defaultRecipients.add(new RecipientUser(10003, "Trần Ngọc", "Vy", "0903344556"));
+        defaultRecipients.add(new RecipientUser(10004, "Phạm Gia", "Bảo", "0904455667"));
+        defaultRecipients.add(new RecipientUser(10005, "Đoàn Khánh", "Linh", "0905566778"));
+    }
+
+    // =============================================================
+    // LOAD USER TỪ DATABASE
+    // =============================================================
+    private void loadRecipientsFromDB() {
         allRecipients = new ArrayList<>();
+
+        Cursor cursor = dbHelper.getAllUsers();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
+                if (id == currentUserId) continue;
+
+                String first = cursor.getString(cursor.getColumnIndexOrThrow("first_name"));
+                String last = cursor.getString(cursor.getColumnIndexOrThrow("last_name"));
+                String phone = cursor.getString(cursor.getColumnIndexOrThrow("phone"));
+
+                allRecipients.add(new RecipientUser(id, first, last, phone));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+    }
+
+    // =============================================================
+    // GỘP 5 NGƯỜI MẶC ĐỊNH + USER TRONG DB
+    // =============================================================
+    private void mergeLists() {
+        combinedList = new ArrayList<>();
+        combinedList.addAll(defaultRecipients); // luôn có 5 người mặc định
+        combinedList.addAll(allRecipients);     // thêm user thật
+    }
+
+    // =============================================================
+    // HIỂN THỊ DANH SÁCH NGƯỜI NHẬN
+    // =============================================================
+    private void renderAllRecipients(List<RecipientUser> list) {
         llRecipientList.removeAllViews();
-
-        // Tạo 2 người dùng mẫu cố định
-        RecipientUser user1 = new RecipientUser(2, "Người", "dùng 1", "0901234567");
-        RecipientUser user2 = new RecipientUser(3, "Người", "dùng 2", "0907654321");
-
-        allRecipients.add(user1);
-        allRecipients.add(user2);
-
-        // Hiển thị 2 người dùng
-        addRecipientView(user1);
-        addRecipientView(user2);
+        for (RecipientUser r : list) addRecipientView(r);
     }
 
     private void addRecipientView(RecipientUser recipient) {
-        View recipientView = getLayoutInflater().inflate(R.layout.item_recipient, llRecipientList, false);
 
-        CardView cardRecipient = recipientView.findViewById(R.id.cardRecipient);
-        TextView tvRecipientName = recipientView.findViewById(R.id.tvRecipientName);
-        TextView tvRecipientEmail = recipientView.findViewById(R.id.tvRecipientEmail);
+        View view = getLayoutInflater().inflate(R.layout.item_recipient, llRecipientList, false);
+
+        TextView tvName = view.findViewById(R.id.tvRecipientName);
+        TextView tvPhone = view.findViewById(R.id.tvRecipientEmail);
+        TextView tvAvatar = view.findViewById(R.id.tvAvatar);
+
+        CardView card = view.findViewById(R.id.cardRecipient);
 
         String fullName = recipient.firstName + " " + recipient.lastName;
-        tvRecipientName.setText(fullName);
+        tvName.setText(fullName);
+        tvPhone.setText(recipient.phone);
 
-        // Hiển thị số điện thoại thay vì email
-        if (recipient.phone != null && !recipient.phone.isEmpty()) {
-            tvRecipientEmail.setText(recipient.phone);
-        } else {
-            tvRecipientEmail.setVisibility(View.GONE);
-        }
+        tvAvatar.setText(recipient.firstName.substring(0,1).toUpperCase());
 
-        cardRecipient.setOnClickListener(v -> {
+        card.setOnClickListener(v -> {
             Intent intent = new Intent(TransferActivity.this, TransferConfirmActivity.class);
             intent.putExtra("recipientId", recipient.userId);
             intent.putExtra("recipientName", fullName);
@@ -125,61 +190,118 @@ public class TransferActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        llRecipientList.addView(recipientView);
+        llRecipientList.addView(view);
     }
 
-    private void filterRecipients(String searchText) {
+    // =============================================================
+    // TÌM KIẾM
+    // =============================================================
+    private void filterRecipients(String text) {
         llRecipientList.removeAllViews();
 
-        if (searchText.isEmpty()) {
-            for (RecipientUser recipient : allRecipients) {
-                addRecipientView(recipient);
-            }
+        if (text.isEmpty()) {
+            renderAllRecipients(combinedList);
             return;
         }
 
-        String searchLower = searchText.toLowerCase();
-        boolean found = false;
+        String key = text.toLowerCase();
 
-        for (RecipientUser recipient : allRecipients) {
-            String fullName = (recipient.firstName + " " + recipient.lastName).toLowerCase();
-            String phone = recipient.phone != null ? recipient.phone : "";
+        List<RecipientUser> filtered = new ArrayList<>();
 
-            if (fullName.contains(searchLower) || phone.contains(searchLower)) {
-                addRecipientView(recipient);
-                found = true;
+        for (RecipientUser r : combinedList) {
+            String full = (r.firstName + " " + r.lastName).toLowerCase();
+            if (full.contains(key) || r.phone.contains(key)) {
+                filtered.add(r);
             }
         }
 
-        if (!found) {
-            TextView tvEmpty = new TextView(this);
-            tvEmpty.setText("Không tìm thấy người dùng");
-            tvEmpty.setPadding(32, 32, 32, 32);
-            tvEmpty.setTextSize(14);
-            tvEmpty.setTextColor(0xFF757575);
-            llRecipientList.addView(tvEmpty);
+        if (filtered.isEmpty()) {
+            TextView tv = new TextView(this);
+            tv.setText("Không tìm thấy người dùng");
+            tv.setPadding(32, 32, 32, 32);
+            llRecipientList.addView(tv);
+            return;
         }
+
+        renderAllRecipients(filtered);
     }
 
     private static class RecipientUser {
         int userId;
-        String firstName;
-        String lastName;
-        String phone;
+        String firstName, lastName, phone;
 
-        RecipientUser(int userId, String firstName, String lastName, String phone) {
-            this.userId = userId;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.phone = phone;
+        RecipientUser(int id, String fn, String ln, String p) {
+            userId = id;
+            firstName = fn;
+            lastName = ln;
+            phone = p;
         }
     }
 
+    // =============================================================
+    // QR CODE SCANNER
+    // =============================================================
+    private void startQrScanner() {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+        integrator.setPrompt("Đưa mã QR vào khung hình");
+        integrator.setCameraId(0);
+        integrator.setBeepEnabled(true);
+        integrator.setBarcodeImageEnabled(false);
+        integrator.initiateScan();
+    }
+
     @Override
-    protected void onResume() {
-        super.onResume();
-        // Refresh balance when returning to this screen
-        currentBalance = sharedPreferences.getFloat("balance", 0);
-        tvCurrentBalance.setText(currencyFormat.format(currentBalance));
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this, "Đã hủy quét mã QR", Toast.LENGTH_SHORT).show();
+            } else {
+                handleQrContent(result.getContents());
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void handleQrContent(String qr) {
+        try {
+            String[] p = qr.split("\\|");
+
+            if (p.length < 4 || !p[0].equals("EWALLET")) {
+                Toast.makeText(this, "Mã QR không đúng định dạng!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int id = Integer.parseInt(p[1]);
+            String name = p[2];
+            String phone = p[3];
+
+
+            // Nếu là user mặc định (ID >= 10000) thì bỏ qua việc kiểm tra DB
+            if (id < 10000) {
+                Cursor c = dbHelper.getUserById(id);
+                if (c == null || !c.moveToFirst()) {
+                    Toast.makeText(this, "Người dùng không tồn tại!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                c.close();
+            }
+
+
+            Intent intent = new Intent(TransferActivity.this, TransferConfirmActivity.class);
+            intent.putExtra("recipientId", id);
+            intent.putExtra("recipientName", name);
+            intent.putExtra("recipientPhone", phone);
+            intent.putExtra("currentBalance", currentBalance);
+            startActivity(intent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi đọc mã QR", Toast.LENGTH_SHORT).show();
+        }
     }
 }
