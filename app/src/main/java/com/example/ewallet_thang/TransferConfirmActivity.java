@@ -27,18 +27,20 @@ import java.util.Locale;
 public class TransferConfirmActivity extends AppCompatActivity {
 
     private ImageView btnBack;
-    private TextView tvRecipientName, tvRecipientEmail;
+    private TextView tvRecipientName;
     private EditText etAmount;
     private Spinner spinnerCategory;
     private Button btnTransfer;
 
     private DatabaseHelper dbHelper;
     private SharedPreferences sharedPreferences;
+
     private int currentUserId;
     private int recipientId;
     private String recipientName;
-    private String recipientEmail;
+    private String recipientPhone;
     private double currentBalance;
+
     private String selectedCategory = "";
     private NumberFormat currencyFormat;
 
@@ -63,13 +65,14 @@ public class TransferConfirmActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         sharedPreferences = getSharedPreferences("EWalletPrefs", MODE_PRIVATE);
         currentUserId = sharedPreferences.getInt("userId", -1);
+
         currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 
-        // Get data from intent
+        // Nhận dữ liệu từ Intent
         Intent intent = getIntent();
         recipientId = intent.getIntExtra("recipientId", -1);
         recipientName = intent.getStringExtra("recipientName");
-        recipientEmail = intent.getStringExtra("recipientEmail");
+        recipientPhone = intent.getStringExtra("recipientPhone");  // ĐÃ SỬA
         currentBalance = intent.getDoubleExtra("currentBalance", 0);
 
         initViews();
@@ -80,16 +83,15 @@ public class TransferConfirmActivity extends AppCompatActivity {
     private void initViews() {
         btnBack = findViewById(R.id.btnBack);
         tvRecipientName = findViewById(R.id.tvRecipientName);
-        tvRecipientEmail = findViewById(R.id.tvRecipientEmail);
         etAmount = findViewById(R.id.etAmount);
         spinnerCategory = findViewById(R.id.spinnerCategory);
         btnTransfer = findViewById(R.id.btnTransfer);
 
-        tvRecipientName.setText(recipientName.toUpperCase());
-        tvRecipientEmail.setText("số tiền");
+        // Hiển thị tên người nhận
+        tvRecipientName.setText(recipientName);
 
-        // Set default amount
-        etAmount.setText("500000");
+        // Đặt sẵn gợi ý số tiền (tuỳ bạn)
+        etAmount.setText("");
     }
 
     private void setupListeners() {
@@ -117,17 +119,14 @@ public class TransferConfirmActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_item,
                 categories
         );
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategory.setAdapter(adapter);
 
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position > 0) {
-                    selectedCategory = categories[position];
-                } else {
-                    selectedCategory = "";
-                }
+                selectedCategory = (position > 0) ? categories[position] : "";
             }
 
             @Override
@@ -170,86 +169,76 @@ public class TransferConfirmActivity extends AppCompatActivity {
     }
 
     private void processTransfer() {
-        if (!validateAmount()) {
-            return;
-        }
+        if (!validateAmount()) return;
 
         if (selectedCategory.isEmpty()) {
             Toast.makeText(this, "Vui lòng chọn phân loại", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String amountStr = etAmount.getText().toString().trim();
-        double amount = Double.parseDouble(amountStr);
+        double amount = Double.parseDouble(etAmount.getText().toString().trim());
 
-        // Lấy thời gian hiện tại (dùng cho hiển thị sau)
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
         String currentDate = dateFormat.format(new Date());
 
-        // Ghi giao dịch cho người gửi (chi tiêu)
-        String description = "Chuyển tiền tới " + recipientName;
+        // Giao dịch của người gửi
         long senderTransactionId = dbHelper.addTransaction(
                 currentUserId,
                 "EXPENSE",
                 amount,
-                description,
+                "Chuyển tiền tới " + recipientName,
                 selectedCategory
         );
 
-        // Ghi giao dịch cho người nhận (thu nhập)
-        String firstName = sharedPreferences.getString("firstName", "");
-        String lastName = sharedPreferences.getString("lastName", "");
-        String senderFullName = firstName + " " + lastName;
-        String recipientDescription = "Nhận tiền từ " + senderFullName;
+        // Giao dịch của người nhận (nếu không phải user mặc định)
+        long recipientTransactionId = -1;
 
-        long recipientTransactionId = dbHelper.addTransaction(
-                recipientId,
-                "INCOME",
-                amount,
-                recipientDescription,
-                selectedCategory
-        );
+        if (recipientId < 10000) {
+            String senderFullName = sharedPreferences.getString("firstName", "") + " " +
+                    sharedPreferences.getString("lastName", "");
 
+            recipientTransactionId = dbHelper.addTransaction(
+                    recipientId,
+                    "INCOME",
+                    amount,
+                    "Nhận tiền từ " + senderFullName,
+                    selectedCategory
+            );
+        }
+
+        // Thông báo
         if (senderTransactionId != -1) {
             dbHelper.addNotification(
                     currentUserId,
-                    "Chi tiêu", // Title
-                    "- " + currencyFormat.format(amount), // Message (chỉ là số tiền)
-                    "EXPENSE", // Type
+                    "Chi tiêu",
+                    "- " + currencyFormat.format(amount),
+                    "EXPENSE",
                     (int) senderTransactionId
             );
         }
 
         if (recipientTransactionId != -1) {
-            // Tạo thông báo "Thu nhập" cho người nhận
             dbHelper.addNotification(
                     recipientId,
-                    "Thu nhập", // Title
-                    "+ " + currencyFormat.format(amount), // Message (chỉ là số tiền)
-                    "INCOME", // Type
+                    "Thu nhập",
+                    "+ " + currencyFormat.format(amount),
+                    "INCOME",
                     (int) recipientTransactionId
             );
         }
 
-        // Kiểm tra kết quả
-        if (senderTransactionId > 0 && recipientTransactionId > 0) {
-            // Cập nhật số dư trong SharedPreferences
-            double newBalance = currentBalance - amount;
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putFloat("balance", (float) newBalance);
-            editor.apply();
+        // Trừ tiền người gửi
+        double newBalance = currentBalance - amount;
+        sharedPreferences.edit().putFloat("balance", (float) newBalance).apply();
 
-            // Chuyển đến màn hình thành công
-            Intent intent = new Intent(TransferConfirmActivity.this, TransferSuccessActivity.class);
-            intent.putExtra("recipientName", recipientName);
-            intent.putExtra("amount", amount);
-            intent.putExtra("date", currentDate);
-            intent.putExtra("category", selectedCategory);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(this, "Chuyển tiền thất bại. Vui lòng thử lại!", Toast.LENGTH_SHORT).show();
-        }
+        // Màn hình thành công
+        Intent intent = new Intent(TransferConfirmActivity.this, TransferSuccessActivity.class);
+        intent.putExtra("recipientName", recipientName);
+        intent.putExtra("amount", amount);
+        intent.putExtra("date", currentDate);
+        intent.putExtra("category", selectedCategory);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 }

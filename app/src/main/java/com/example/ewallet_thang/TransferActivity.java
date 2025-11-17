@@ -22,8 +22,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.ewallet_thang.database.DatabaseHelper;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -77,7 +75,6 @@ public class TransferActivity extends AppCompatActivity {
 
     private void initViews() {
         btnBack = findViewById(R.id.btnBack);
-        ivScanQr = findViewById(R.id.ivScanQr);
         tvCurrentBalance = findViewById(R.id.tvCurrentBalance);
         etSearch = findViewById(R.id.etSearch);
         llRecipientList = findViewById(R.id.llRecipientList);
@@ -88,7 +85,7 @@ public class TransferActivity extends AppCompatActivity {
 
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
-        ivScanQr.setOnClickListener(v -> startQrScanner());
+
 
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -238,70 +235,4 @@ public class TransferActivity extends AppCompatActivity {
         }
     }
 
-    // =============================================================
-    // QR CODE SCANNER
-    // =============================================================
-    private void startQrScanner() {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-        integrator.setPrompt("Đưa mã QR vào khung hình");
-        integrator.setCameraId(0);
-        integrator.setBeepEnabled(true);
-        integrator.setBarcodeImageEnabled(false);
-        integrator.initiateScan();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-
-        if (result != null) {
-            if (result.getContents() == null) {
-                Toast.makeText(this, "Đã hủy quét mã QR", Toast.LENGTH_SHORT).show();
-            } else {
-                handleQrContent(result.getContents());
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    private void handleQrContent(String qr) {
-        try {
-            String[] p = qr.split("\\|");
-
-            if (p.length < 4 || !p[0].equals("EWALLET")) {
-                Toast.makeText(this, "Mã QR không đúng định dạng!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            int id = Integer.parseInt(p[1]);
-            String name = p[2];
-            String phone = p[3];
-
-
-            // Nếu là user mặc định (ID >= 10000) thì bỏ qua việc kiểm tra DB
-            if (id < 10000) {
-                Cursor c = dbHelper.getUserById(id);
-                if (c == null || !c.moveToFirst()) {
-                    Toast.makeText(this, "Người dùng không tồn tại!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                c.close();
-            }
-
-
-            Intent intent = new Intent(TransferActivity.this, TransferConfirmActivity.class);
-            intent.putExtra("recipientId", id);
-            intent.putExtra("recipientName", name);
-            intent.putExtra("recipientPhone", phone);
-            intent.putExtra("currentBalance", currentBalance);
-            startActivity(intent);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Lỗi đọc mã QR", Toast.LENGTH_SHORT).show();
-        }
-    }
 }
