@@ -1,5 +1,6 @@
 package com.example.ewallet_thang;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -76,6 +77,15 @@ public class NotificationActivity extends AppCompatActivity {
             finish();
             return true;
         } else if (itemId == R.id.nav_notification) {
+            return true;
+        }
+        else if (itemId == R.id.nav_statistics) {
+            Intent intent = new Intent(NotificationActivity.this, StatisticsActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (itemId == R.id.nav_profile) {
+            Intent intent = new Intent(NotificationActivity.this, ProfileActivity.class);
+            startActivity(intent);
             return true;
         }
         return false;
