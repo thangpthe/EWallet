@@ -4,9 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat; // Thêm thư viện này
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.ewallet_thang.R;
 import com.example.ewallet_thang.models.Transaction;
@@ -43,12 +43,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
         Transaction transaction = transactionList.get(position);
 
-        // Set transaction icon based on type
+        // Sử dụng tên màu chuẩn và ContextCompat
         if (transaction.isIncome()) {
-            holder.tvAmount.setTextColor(context.getResources().getColor(R.color.green));
+            holder.tvAmount.setTextColor(ContextCompat.getColor(context, R.color.colorSuccess));
             holder.tvAmount.setText("+" + currencyFormat.format(transaction.getAmount()));
         } else {
-            holder.tvAmount.setTextColor(context.getResources().getColor(R.color.red));
+            holder.tvAmount.setTextColor(ContextCompat.getColor(context, R.color.colorError));
             holder.tvAmount.setText("-" + currencyFormat.format(transaction.getAmount()));
         }
 

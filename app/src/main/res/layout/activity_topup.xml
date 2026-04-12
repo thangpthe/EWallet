@@ -4,131 +4,383 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="#F0F2FF">
 
     <!-- Header -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="104dp"
-        android:background="#FFFFFF"
-        android:elevation="4dp"
-        android:padding="16dp">
+        android:layout_height="56dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="20dp"
+        android:background="#F0F2FF">
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_centerVertical="true"
-            android:contentDescription="Back"
-            android:src="@drawable/ic_back" />
+            android:padding="6dp"
+            android:src="@drawable/ic_back"
+            android:tint="#1A1D4E"
+            android:contentDescription="Back"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/btnBack"
+            android:layout_marginStart="8dp"
             android:text="Nạp tiền"
-            android:textColor="#333333"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textColor="#0D0F3C"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="Nexus"
+            android:textColor="#3D5AFE"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
     </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
 
-            <!-- Current Balance Card -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- Amount Input Area -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingTop="24dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nhập số tiền"
+                    android:textColor="#8890B5"
+                    android:textSize="14sp"/>
+
+                <!-- Amount display row -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="8dp">
+
+                    <EditText
+                        android:id="@+id/etAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100.000"
+                        android:hint="0"
+                        android:inputType="number"
+                        android:textColor="#0D0F3C"
+                        android:textSize="42sp"
+                        android:textStyle="bold"
+                        android:background="@null"
+                        android:minWidth="80dp"
+                        android:gravity="center"
+                        android:padding="0dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:text="đ"
+                        android:textColor="#3D5AFE"
+                        android:textSize="28sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Underline indicator -->
+                <View
+                    android:layout_width="120dp"
+                    android:layout_height="3dp"
+                    android:layout_marginTop="8dp"
+                    android:background="#3D5AFE"
+                    android:alpha="0.4"/>
+            </LinearLayout>
+
+            <!-- Quick Amount Buttons -->
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:rowCount="2"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+
+                <!-- 50k -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn50k"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#FFFFFF">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="50.000đ"
+                        android:textColor="#0D0F3C"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 100k (selected) -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn100k"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#E8EAFF">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="100.000đ"
+                        android:textColor="#3D5AFE"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 200k -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn200k"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#FFFFFF">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="200.000đ"
+                        android:textColor="#0D0F3C"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 500k -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn500k"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#FFFFFF">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="500.000đ"
+                        android:textColor="#0D0F3C"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+                </androidx.cardview.widget.CardView>
+
+            </GridLayout>
+
+            <!-- Nguồn tiền section -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Nguồn tiền"
+                    android:textColor="#0D0F3C"
+                    android:textSize="17sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:text="Thay đổi"
+                    android:textColor="#3D5AFE"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+            </RelativeLayout>
+
+            <!-- Bank Card Row -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="#2196F3">
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:gravity="center">
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Số tiền hiện tại"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp"/>
+                    <!-- Bank Logo placeholder -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="#1A1D4E">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="VCB"
+                            android:textColor="#FFFFFF"
+                            android:textSize="10sp"
+                            android:textStyle="bold"/>
+                    </androidx.cardview.widget.CardView>
 
-                    <TextView
-                        android:id="@+id/tvCurrentBalance"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="2,000,000"
-                        android:textColor="#FFFFFF"
-                        android:textSize="32sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:orientation="vertical">
+
+                        <Spinner
+                            android:id="@+id/spinnerBank"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:textSize="15sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:id="@+id/tvCurrentBalance"
+                            android:text="**** 4829  •  15.000.000đ"
+                            android:textColor="#8890B5"
+                            android:textSize="13sp"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_right"
+                        android:tint="#B0B8D8"/>
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </androidx.cardview.widget.CardView>
 
-            <!-- Bank Selection -->
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- Transaction Limit Info Box -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Chọn ngân hàng"
-                android:textColor="#333333"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="24dp"/>
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#E8F4FD">
 
-            <Spinner
-                android:id="@+id/spinnerBank"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/spinner_background"
-                android:padding="12dp"
-                android:layout_marginTop="8dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="top">
 
-            <!-- Amount Input -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Số tiền"
-                android:textColor="#333333"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="24dp"/>
+                    <TextView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@drawable/circle_income"
+                        android:gravity="center"
+                        android:text="i"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:textStyle="bold"/>
 
-            <EditText
-                android:id="@+id/etAmount"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/edittext_background"
-                android:hint="Nhập số tiền"
-                android:inputType="number"
-                android:padding="12dp"
-                android:textColor="#333333"
-                android:textSize="14sp"
-                android:layout_marginTop="8dp"/>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical">
 
-            <!-- Top Up Button -->
-            <Button
-                android:id="@+id/btnTopUp"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="Nạp"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:background="@drawable/button_primary"
-                android:layout_marginTop="32dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="HẠN MỨC GIAO DỊCH"
+                            android:textColor="#2E7D32"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.08"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Bạn có thể nạp tối đa 50.000.000đ mỗi ngày thông qua ngân hàng liên kết này."
+                            android:textColor="#4A4A4A"
+                            android:textSize="13sp"
+                            android:lineSpacingMultiplier="1.4"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
     </ScrollView>
+
+    <!-- Bottom CTA Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#F0F2FF"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="24dp">
+
+        <Button
+            android:id="@+id/btnTopUp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Nạp tiền • 100.000đ"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:backgroundTint="#3D5AFE"
+            app:cornerRadius="30dp"
+            style="@style/Widget.MaterialComponents.Button"/>
+
+    </LinearLayout>
 
 </LinearLayout>

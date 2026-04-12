@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,15 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EWallet_Thang">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
         </activity>
+
         <activity android:name=".LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
@@ -28,6 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".RegisterActivity"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"/>
 
@@ -55,22 +56,31 @@
             android:name=".TopUpSuccessActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.EWallet_Thang" />
+
         <activity
             android:name=".NotificationActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".StatisticsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".TransactionHistoryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.EWallet_Thang" />
+
+        <activity
+            android:name=".CustomScannerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
     </application>
 
 </manifest>

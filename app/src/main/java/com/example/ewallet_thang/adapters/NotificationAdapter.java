@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat; // Thêm import này để lấy màu chuẩn
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.ewallet_thang.R;
 import com.example.ewallet_thang.models.Notification;
@@ -55,13 +56,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         // Parse message để lấy số tiền và ngày
         String message = notification.getMessage();
 
-        // Set icon và màu dựa trên type
+        // Set icon và màu dựa trên type sử dụng tên màu mới trong colors.xml
         if ("EXPENSE".equals(notification.getType()) || "Chi tiêu".equals(notification.getTitle())) {
             holder.ivNotificationIcon.setImageResource(R.drawable.ic_expense);
-            holder.ivNotificationIcon.setColorFilter(context.getResources().getColor(R.color.red));
+            holder.ivNotificationIcon.setColorFilter(ContextCompat.getColor(context, R.color.colorError));
 
             // Hiển thị số tiền và ngày cho chi tiêu
-            holder.tvAmount.setTextColor(context.getResources().getColor(R.color.red));
+            holder.tvAmount.setTextColor(ContextCompat.getColor(context, R.color.colorError));
             holder.layoutExpense.setVisibility(View.VISIBLE);
             holder.layoutGoal.setVisibility(View.GONE);
             holder.layoutIncome.setVisibility(View.GONE);
@@ -72,7 +73,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         } else if ("INCOME".equals(notification.getType()) || "Thu nhập".equals(notification.getTitle())) {
             holder.ivNotificationIcon.setImageResource(R.drawable.ic_income);
-            holder.ivNotificationIcon.setColorFilter(context.getResources().getColor(R.color.green));
+            holder.ivNotificationIcon.setColorFilter(ContextCompat.getColor(context, R.color.colorSuccess));
 
 
             holder.layoutExpense.setVisibility(View.GONE);
@@ -83,7 +84,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         } else if ("GOAL".equals(notification.getType()) || "Mục tiêu tiết kiệm".equals(notification.getTitle())) {
             holder.ivNotificationIcon.setImageResource(R.drawable.ic_goal);
-            holder.ivNotificationIcon.setColorFilter(context.getResources().getColor(R.color.green));
+            holder.ivNotificationIcon.setColorFilter(ContextCompat.getColor(context, R.color.colorSuccess));
             holder.tvGoalDescription.setText(message);
 
             // SỬA LẠI:
@@ -93,7 +94,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             holder.tvGoalDescription.setVisibility(View.VISIBLE);
         } else {
             holder.ivNotificationIcon.setImageResource(R.drawable.ic_notification);
-            holder.ivNotificationIcon.setColorFilter(context.getResources().getColor(R.color.primary));
+            holder.ivNotificationIcon.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary));
             holder.layoutExpense.setVisibility(View.GONE);
             holder.layoutGoal.setVisibility(View.GONE);
             holder.layoutIncome.setVisibility(View.GONE);
@@ -115,11 +116,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             holder.tvDate.setText(notification.getDate());
         }
 
-        // Highlight nếu chưa đọc
+        // Highlight nếu chưa đọc (Dùng màu nền sáng cho chưa đọc, màu trắng cho đã đọc)
         if (!notification.isRead()) {
-            holder.cardNotification.setCardBackgroundColor(context.getResources().getColor(R.color.unread_bg));
+            holder.cardNotification.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorBackground));
         } else {
-            holder.cardNotification.setCardBackgroundColor(context.getResources().getColor(android.R.color.white));
+            holder.cardNotification.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorSurface));
         }
 
         holder.cardNotification.setOnClickListener(v -> {

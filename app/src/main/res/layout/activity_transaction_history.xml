@@ -1,176 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="@color/colorBackground">
 
-    <!-- Header -->
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/header_gradient"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:background="@color/colorSurface"
+        app:elevation="0dp">
 
-        <!-- Top Bar -->
-        <RelativeLayout
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="?attr/actionBarSize">
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_centerVertical="true"
-                android:padding="4dp"
-                android:src="@drawable/ic_back_white"
-                android:contentDescription="Back"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_back"
+                app:tint="@color/colorTextPrimary"/>
 
             <TextView
-                android:layout_marginTop="80dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_gravity="center"
                 android:text="Lịch sử giao dịch"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="18sp"
                 android:textStyle="bold"/>
-        </RelativeLayout>
+        </androidx.appcompat.widget.Toolbar>
 
-        <!-- Statistics Card -->
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="#FFFFFF">
+            android:orientation="horizontal"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="16dp"
+            android:weightSum="2">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tổng giao dịch"
-                        android:textColor="#757575"
-                        android:textSize="14sp"/>
-
-                    <TextView
-                        android:id="@+id/tvTotalTransactions"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0 giao dịch"
-                        android:textColor="#333333"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#E0E0E0"
-                    android:layout_marginHorizontal="16dp"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
+                    android:text="Tổng giao dịch"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="14sp"/>
+                <TextView
+                    android:id="@+id/tvTotalTransactions"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tổng số tiền"
-                        android:textColor="#757575"
-                        android:textSize="14sp"/>
-
-                    <TextView
-                        android:id="@+id/tvTotalAmount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="+0 ₫"
-                        android:textColor="#4CAF50"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
+                    android:text="0"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="24sp"
+                    android:textStyle="bold"/>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
 
-    <!-- Filter Chips -->
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:background="#FFFFFF"
-        android:elevation="2dp"
-        android:padding="12dp">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng số tiền"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="14sp"/>
+                <TextView
+                    android:id="@+id/tvTotalAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 ₫"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="24sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupFilter"
-            android:layout_width="wrap_content"
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:singleSelection="true"
-            app:selectionRequired="true">
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="12dp"
+            android:scrollbars="none">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipAll"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tất cả"
-                android:checked="true"
-                style="@style/Widget.MaterialComponents.Chip.Choice"/>
+                app:selectionRequired="true"
+                app:singleSelection="true">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipIncome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Thu nhập"
-                style="@style/Widget.MaterialComponents.Chip.Choice"/>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAll"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Tất cả" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipExpense"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chi tiêu"
-                style="@style/Widget.MaterialComponents.Chip.Choice"/>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipIncome"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thu nhập" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipTransfer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chuyển tiền"
-                style="@style/Widget.MaterialComponents.Chip.Choice"/>
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipExpense"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chi tiêu" />
 
-    <!-- Transactions List -->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipTransfer"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chuyển khoản" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvTransactions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="12dp"
-            android:clipToPadding="false"/>
+            android:clipToPadding="false"
+            android:padding="16dp" />
 
-        <!-- Empty State -->
         <LinearLayout
             android:id="@+id/tvEmptyState"
             android:layout_width="wrap_content"
@@ -183,18 +159,18 @@
             <ImageView
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@drawable/ic_empty_transaction"
-                android:alpha="0.5"
-                android:contentDescription="No transactions"/>
+                android:src="@drawable/ic_history"
+                app:tint="@color/colorTextHint"
+                android:alpha="0.5"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Chưa có giao dịch"
-                android:textColor="#757575"
+                android:textColor="@color/colorTextSecondary"
                 android:textSize="16sp"
                 android:layout_marginTop="16dp"/>
         </LinearLayout>
     </FrameLayout>
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

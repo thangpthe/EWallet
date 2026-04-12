@@ -1,115 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFFFFF"
-    android:padding="24dp"
-    android:gravity="center">
+    android:background="@color/colorBackground">
 
-    <!-- Success Icon -->
+    <View
+        android:id="@+id/bgSuccess"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:background="@drawable/circle_success"
+        app:layout_constraintBottom_toTopOf="@id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
     <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:src="@drawable/ic_success"
-        android:contentDescription="Success"
-        android:layout_marginBottom="16dp"/>
+        app:layout_constraintBottom_toBottomOf="@id/bgSuccess"
+        app:layout_constraintEnd_toEndOf="@id/bgSuccess"
+        app:layout_constraintStart_toStartOf="@id/bgSuccess"
+        app:layout_constraintTop_toTopOf="@id/bgSuccess"
+        app:tint="@color/colorSuccess" />
 
-    <!-- Success Title -->
     <TextView
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nạp tiền thành công"
-        android:textColor="#333333"
-        android:textSize="24sp"
+        android:layout_marginTop="@dimen/spacing_large"
+        android:text="Thành công!"
+        android:textColor="@color/colorTextPrimary"
+        android:textSize="@dimen/text_header"
         android:textStyle="bold"
-        android:layout_marginBottom="32dp"/>
+        app:layout_constraintBottom_toTopOf="@id/tvAmount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bgSuccess" />
 
-    <!-- Transaction Details Card -->
+    <TextView
+        android:id="@+id/tvAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_small"
+        android:text="+ 0 ₫"
+        android:textColor="@color/colorSuccess"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/cardDetails"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        android:layout_margin="@dimen/spacing_large"
+        app:cardBackgroundColor="@color/colorSurface"
+        app:cardCornerRadius="@dimen/card_corner_radius"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/colorDivider"
+        app:strokeWidth="1dp"
+        app:layout_constraintBottom_toTopOf="@id/btnBackToHome"
+        app:layout_constraintTop_toBottomOf="@id/tvAmount">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="@dimen/spacing_large">
 
-            <!-- Bank -->
-            <TextView
-                android:id="@+id/tvBank"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ngân hàng Vietcombank"
-                android:textColor="#333333"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Nguồn tiền"
+                    android:textColor="@color/colorTextSecondary" />
+                <TextView
+                    android:id="@+id/tvBank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ngân hàng"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
-            <!-- Amount -->
-            <TextView
-                android:id="@+id/tvAmount"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="500,000"
-                android:textColor="#2196F3"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
-
-            <!-- Date Label -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ngày thực hiện"
-                android:textColor="#757575"
-                android:textSize="14sp"
-                android:layout_marginBottom="4dp"/>
-
-            <!-- Date Value -->
-            <TextView
-                android:id="@+id/tvDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="28/09/2025"
-                android:textColor="#333333"
-                android:textSize="16sp"
-                android:layout_marginBottom="16dp"/>
-
-            <!-- Note Label -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ghi chú"
-                android:textColor="#757575"
-                android:textSize="14sp"
-                android:layout_marginBottom="4dp"/>
-
-            <!-- Note Value -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nạp tiền"
-                android:textColor="#333333"
-                android:textSize="16sp"/>
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Thời gian"
+                    android:textColor="@color/colorTextSecondary" />
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--/--/----"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Back Button -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnBackToHome"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="Quay lại"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:layout_height="60dp"
+        android:layout_margin="@dimen/spacing_large"
+        android:text="Về trang chủ"
         android:textStyle="bold"
-        android:background="@drawable/button_primary"/>
+        app:backgroundTint="@color/colorPrimary"
+        app:cornerRadius="@dimen/button_corner_radius"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

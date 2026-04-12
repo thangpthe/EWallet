@@ -17,8 +17,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Ăn uống"
-            android:textSize="14sp"
-            android:textColor="#333333"/>
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"/>
 
         <TextView
             android:id="@+id/tvAmount"
@@ -26,7 +27,7 @@
             android:layout_height="wrap_content"
             android:text="2.000.000 ₫"
             android:textSize="14sp"
-            android:textColor="#F44336"
+            android:textColor="@color/colorError"
             android:textStyle="bold"
             android:layout_marginEnd="8dp"/>
 
@@ -35,8 +36,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="40%"
-            android:textSize="12sp"
-            android:textColor="#757575"/>
+            android:textSize="13sp"
+            android:textColor="@color/colorTextSecondary"/>
     </LinearLayout>
 
     <ProgressBar
@@ -45,8 +46,6 @@
         android:layout_width="match_parent"
         android:layout_height="8dp"
         android:layout_marginTop="8dp"
-        android:max="100"
-        android:progress="40"
-        android:progressTint="#F44336"/>
-
+        android:progressTint="@color/colorWarning"
+        android:progressBackgroundTint="@color/colorDivider" />
 </LinearLayout>
