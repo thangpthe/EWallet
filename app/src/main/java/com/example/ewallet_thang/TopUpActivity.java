@@ -651,6 +651,7 @@
 
 package com.example.ewallet_thang;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -681,30 +682,45 @@ import java.util.Map;
 
 public class TopUpActivity extends AppCompatActivity {
 
+    // ── Request code cho màn hình chọn voucher ───────────────────────────────
+    private static final int REQUEST_VOUCHER = 2001;
+
     private TextView tvCurrentBalance;
-    private Spinner spinnerBank;
+    private Spinner  spinnerBank;
     private EditText etAmount;
-    private Button btnTopUp;
+    private Button   btnTopUp;
     private ImageView btnBack;
     private CardView btn50k, btn100k, btn200k, btn500k;
 
-    private FirebaseFirestore db;
-    private SharedPreferences sharedPreferences;
-    private String userPhone;
-    private double currentBalance;
-    private NumberFormat currencyFormat;
-    private long selectedAmount = 0;
+    // ── [TÍCH HỢP MỚI] UI voucher ────────────────────────────────────────────
+    private CardView  cardVoucherSection;
+    private TextView  tvVoucherApplied;
+    private Button    btnSelectVoucher, btnRemoveVoucher;
 
-    private String[] banks = {"Vietcombank", "MB Bank", "Vietinbank", "TP Bank", "Techcombank", "ACB", "VPBank", "Agribank", "BIDV", "Sacombank"};
+    private FirebaseFirestore  db;
+    private SharedPreferences  sharedPreferences;
+    private String             userPhone;
+    private double             currentBalance;
+    private NumberFormat       currencyFormat;
+    private long               selectedAmount = 0;
+
+    // ── [TÍCH HỢP MỚI] Trạng thái voucher ───────────────────────────────────
+    private String  appliedVoucherId   = null;
+    private long    appliedVoucherValue = 0;
+
+    private String[] banks = {
+            "Vietcombank","MB Bank","Vietinbank","TP Bank",
+            "Techcombank","ACB","VPBank","Agribank","BIDV","Sacombank"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topup);
 
-        db = FirebaseFirestore.getInstance();
+        db            = FirebaseFirestore.getInstance();
         sharedPreferences = getSharedPreferences("EWalletPrefs", MODE_PRIVATE);
-        userPhone = sharedPreferences.getString("userPhone", "");
+        userPhone     = sharedPreferences.getString("userPhone", "");
         currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
 
         initViews();
@@ -715,39 +731,46 @@ public class TopUpActivity extends AppCompatActivity {
 
     private void initViews() {
         tvCurrentBalance = findViewById(R.id.tvCurrentBalance);
-        spinnerBank = findViewById(R.id.spinnerBank);
-        etAmount = findViewById(R.id.etAmount);
-        btnTopUp = findViewById(R.id.btnTopUp);
-        btnBack = findViewById(R.id.btnBack);
+        spinnerBank      = findViewById(R.id.spinnerBank);
+        etAmount         = findViewById(R.id.etAmount);
+        btnTopUp         = findViewById(R.id.btnTopUp);
+        btnBack          = findViewById(R.id.btnBack);
 
-        btn50k = findViewById(R.id.btn50k);
+        btn50k  = findViewById(R.id.btn50k);
         btn100k = findViewById(R.id.btn100k);
         btn200k = findViewById(R.id.btn200k);
         btn500k = findViewById(R.id.btn500k);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, banks);
+        // ── [TÍCH HỢP MỚI] Voucher UI ─────────────────────────────────────
+        cardVoucherSection = findViewById(R.id.cardVoucherSection);
+        tvVoucherApplied   = findViewById(R.id.tvVoucherApplied);
+        btnSelectVoucher   = findViewById(R.id.btnSelectVoucher);
+        btnRemoveVoucher   = findViewById(R.id.btnRemoveVoucher);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, banks);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerBank.setAdapter(adapter);
     }
 
     private void loadCurrentBalance() {
         currentBalance = sharedPreferences.getFloat("balance", 0);
-        String balanceStr = currencyFormat.format(currentBalance);
-        tvCurrentBalance.setText("**** 4829  •  " + balanceStr + "đ");
+        tvCurrentBalance.setText("**** 4829  •  "
+                + currencyFormat.format(currentBalance) + "đ");
     }
 
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
-        btn50k.setOnClickListener(v -> selectQuickAmount(50000, btn50k));
+        btn50k.setOnClickListener(v  -> selectQuickAmount(50000,  btn50k));
         btn100k.setOnClickListener(v -> selectQuickAmount(100000, btn100k));
         btn200k.setOnClickListener(v -> selectQuickAmount(200000, btn200k));
         btn500k.setOnClickListener(v -> selectQuickAmount(500000, btn500k));
 
         etAmount.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
             @Override public void afterTextChanged(Editable s) {}
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence s, int st, int b, int c) {
                 String raw = s.toString().replace(".", "").replace(",", "").trim();
                 if (!raw.isEmpty()) {
                     try {
@@ -758,7 +781,62 @@ public class TopUpActivity extends AppCompatActivity {
             }
         });
 
+        // ── [TÍCH HỢP MỚI] Nút chọn / xóa voucher ────────────────────────
+        if (btnSelectVoucher != null) {
+            btnSelectVoucher.setOnClickListener(v -> {
+                Intent intent = new Intent(this, VoucherActivity.class);
+                startActivityForResult(intent, REQUEST_VOUCHER);
+            });
+        }
+        if (btnRemoveVoucher != null) {
+            btnRemoveVoucher.setOnClickListener(v -> removeVoucher());
+        }
+
         btnTopUp.setOnClickListener(v -> processTopUp());
+    }
+
+    // ── [TÍCH HỢP MỚI] Nhận kết quả chọn voucher ────────────────────────────
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_VOUCHER && resultCode == Activity.RESULT_OK && data != null) {
+            String voucherType = data.getStringExtra("voucherType");
+
+            // Chỉ chấp nhận voucher loại TOPUP tại màn hình nạp tiền
+            if (!"TOPUP".equals(voucherType)) {
+                Toast.makeText(this,
+                        "Voucher này chỉ dùng được khi chuyển khoản!",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            appliedVoucherId    = data.getStringExtra("voucherId");
+            appliedVoucherValue = data.getLongExtra("voucherValue", 0);
+            String code         = data.getStringExtra("voucherCode");
+
+            if (tvVoucherApplied != null) {
+                tvVoucherApplied.setText("🎟 " + code + " (-"
+                        + currencyFormat.format(appliedVoucherValue) + "đ)");
+                tvVoucherApplied.setVisibility(View.VISIBLE);
+            }
+            if (btnRemoveVoucher != null)
+                btnRemoveVoucher.setVisibility(View.VISIBLE);
+            if (btnSelectVoucher != null)
+                btnSelectVoucher.setText("Đổi voucher");
+
+            updateButtonText();
+            Toast.makeText(this,
+                    "Áp dụng voucher thành công!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void removeVoucher() {
+        appliedVoucherId    = null;
+        appliedVoucherValue = 0;
+        if (tvVoucherApplied  != null) tvVoucherApplied.setVisibility(View.GONE);
+        if (btnRemoveVoucher  != null) btnRemoveVoucher.setVisibility(View.GONE);
+        if (btnSelectVoucher  != null) btnSelectVoucher.setText("Chọn voucher");
+        updateButtonText();
     }
 
     private void selectQuickAmount(long amount, CardView selectedBtn) {
@@ -768,8 +846,18 @@ public class TopUpActivity extends AppCompatActivity {
     }
 
     private void updateButtonText() {
-        if (selectedAmount > 0) btnTopUp.setText("Nạp tiền  •  " + currencyFormat.format(selectedAmount) + "đ");
-        else btnTopUp.setText("Nạp tiền");
+        long finalAmount = selectedAmount - appliedVoucherValue;
+        if (finalAmount < 0) finalAmount = 0;
+
+        if (appliedVoucherValue > 0 && selectedAmount > 0) {
+            btnTopUp.setText("Nạp " + currencyFormat.format(selectedAmount)
+                    + " - " + currencyFormat.format(appliedVoucherValue)
+                    + "đ = " + currencyFormat.format(finalAmount) + "đ");
+        } else if (selectedAmount > 0) {
+            btnTopUp.setText("Nạp tiền  •  " + currencyFormat.format(selectedAmount) + "đ");
+        } else {
+            btnTopUp.setText("Nạp tiền");
+        }
     }
 
     private void processTopUp() {
@@ -781,49 +869,72 @@ public class TopUpActivity extends AppCompatActivity {
         btnTopUp.setEnabled(false);
         btnTopUp.setText("Đang xử lý...");
 
-        String selectedBank = spinnerBank.getSelectedItem() != null ? spinnerBank.getSelectedItem().toString() : "Ngân hàng";
-        double amount = (double) selectedAmount;
+        String selectedBank = spinnerBank.getSelectedItem() != null
+                ? spinnerBank.getSelectedItem().toString() : "Ngân hàng";
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        String currentDate = sdf.format(new Date());
+        // ── [TÍCH HỢP MỚI] Tính tiền thực nạp sau khi trừ voucher ─────────
+        double actualAmount = selectedAmount - appliedVoucherValue;
+        if (actualAmount < 0) actualAmount = 0;
+        double totalCreditAmount = selectedAmount; // Số tiền cộng vào ví = gốc (voucher là giảm phí)
+
+        String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                Locale.getDefault()).format(new Date());
 
         WriteBatch batch = db.batch();
 
-        // 1. Cập nhật số dư User
-        batch.update(db.collection("users").document(userPhone), "balance", FieldValue.increment(amount));
+        // 1. Cộng tiền vào ví (cộng full selectedAmount – voucher là giảm chi phí nạp)
+        batch.update(db.collection("users").document(userPhone),
+                "balance", FieldValue.increment(totalCreditAmount));
 
-        // 2. Tạo lịch sử giao dịch
+        // 2. Ghi giao dịch
         Map<String, Object> trans = new HashMap<>();
-        trans.put("userPhone", userPhone);
-        trans.put("type", "DEPOSIT");
-        trans.put("amount", amount);
-        trans.put("description", "Nạp tiền từ " + selectedBank);
-        trans.put("category", "Nạp tiền");
-        trans.put("date", currentDate);
-        trans.put("timestamp", System.currentTimeMillis());
+        trans.put("userPhone",   userPhone);
+        trans.put("type",        "DEPOSIT");
+        trans.put("amount",      totalCreditAmount);
+        trans.put("description", "Nạp tiền từ " + selectedBank
+                + (appliedVoucherValue > 0
+                ? " (Voucher -" + currencyFormat.format(appliedVoucherValue) + "đ)" : ""));
+        trans.put("category",    "Nạp tiền");
+        trans.put("date",        date);
+        trans.put("timestamp",   System.currentTimeMillis());
         batch.set(db.collection("transactions").document(), trans);
 
-        // 3. Tạo thông báo
+        // 3. Thông báo
         Map<String, Object> notif = new HashMap<>();
         notif.put("userPhone", userPhone);
-        notif.put("title", "Thu nhập");
-        notif.put("message", "+ " + currencyFormat.format(amount));
-        notif.put("type", "INCOME");
-        notif.put("date", currentDate);
+        notif.put("title",  "Thu nhập");
+        notif.put("message","+ " + currencyFormat.format(totalCreditAmount) + "đ");
+        notif.put("type",   "INCOME");
+        notif.put("date",   date);
         notif.put("isRead", false);
         batch.set(db.collection("notifications").document(), notif);
 
-        // Thực thi đồng loạt
+        // 4. Đánh dấu voucher đã dùng (nếu có)
+        if (appliedVoucherId != null) {
+            batch.update(db.collection("vouchers").document(appliedVoucherId),
+                    "isUsed", true);
+        }
+
         batch.commit().addOnSuccessListener(aVoid -> {
-            Intent intent = new Intent(TopUpActivity.this, TopUpSuccessActivity.class);
-            intent.putExtra("bank", selectedBank);
-            intent.putExtra("amount", amount);
-            intent.putExtra("date", currentDate);
+            // ── [TÍCH HỢP MỚI] Tích điểm sau khi nạp tiền thành công ──────
+            PointsActivity.addPointsForTransaction(
+                    db, userPhone, totalCreditAmount,
+                    "Nạp tiền từ " + selectedBank);
+
+            // ── [TÍCH HỢP MỚI] Cashback tân thủ (giao dịch đầu tiên) ──────
+            NewUserBonusActivity.applyFirstTransactionCashback(
+                    db, sharedPreferences, userPhone, totalCreditAmount);
+
+            Intent intent = new Intent(this, TopUpSuccessActivity.class);
+            intent.putExtra("bank",   selectedBank);
+            intent.putExtra("amount", totalCreditAmount);
+            intent.putExtra("date",   date);
             startActivity(intent);
             finish();
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Lỗi mạng!", Toast.LENGTH_SHORT).show();
             btnTopUp.setEnabled(true);
+            updateButtonText();
         });
     }
 }

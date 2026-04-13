@@ -295,7 +295,6 @@ import com.example.ewallet_thang.models.Transaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -310,13 +309,17 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvUserName, tvBalance, tvTotalIncome, tvTotalExpense;
     private LinearLayout btnSend, btnReceive, btnHistory, btnScanQR;
+
+    // ── [TÍCH HỢP MỚI] Nút Ưu đãi ──────────────────────────────────────────
+    private LinearLayout btnPromotion;
+
     private RecyclerView rvRecentTransactions;
     private BottomNavigationView bottomNav;
 
     private SharedPreferences sharedPreferences;
-    private FirebaseFirestore db; // SỬ DỤNG FIREBASE
+    private FirebaseFirestore db;
 
-    private String userPhone; // Dùng phone làm định danh
+    private String userPhone;
     private TransactionAdapter transactionAdapter;
     private List<Transaction> transactionList;
 
@@ -329,11 +332,9 @@ public class MainActivity extends AppCompatActivity {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
 
-        // Khởi tạo Firebase
         db = FirebaseFirestore.getInstance();
         sharedPreferences = getSharedPreferences("EWalletPrefs", MODE_PRIVATE);
 
-        // Lấy Số điện thoại thay vì userId
         userPhone = sharedPreferences.getString("userPhone", "");
         currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 
@@ -342,45 +343,61 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        // ── [TÍCH HỢP MỚI] Lưu thời điểm đăng ký để đếm ngược tân thủ ─────
+        if (!sharedPreferences.contains("registeredAt_" + userPhone)) {
+            sharedPreferences.edit()
+                    .putLong("registeredAt_" + userPhone, System.currentTimeMillis())
+                    .apply();
+        }
+
         initViews();
         setupListeners();
-
-        // Gọi Firebase lắng nghe dữ liệu Realtime
         listenToUserData();
         listenToRecentTransactions();
         checkCameraPermission();
     }
 
     private void initViews() {
-        tvUserName = findViewById(R.id.tvUserName);
-        tvBalance = findViewById(R.id.tvBalance);
-        tvTotalIncome = findViewById(R.id.tvTotalIncome);
+        tvUserName   = findViewById(R.id.tvUserName);
+        tvBalance    = findViewById(R.id.tvBalance);
+        tvTotalIncome  = findViewById(R.id.tvTotalIncome);
         tvTotalExpense = findViewById(R.id.tvTotalExpense);
 
-        btnSend = findViewById(R.id.btnSend);
-        btnReceive = findViewById(R.id.btnReceive);
-        btnHistory = findViewById(R.id.btnHistory);
-        btnScanQR = findViewById(R.id.btnScanQR);
-        bottomNav = findViewById(R.id.bottomNav);
+        btnSend      = findViewById(R.id.btnSend);
+        btnReceive   = findViewById(R.id.btnReceive);
+        btnHistory   = findViewById(R.id.btnHistory);
+        btnScanQR    = findViewById(R.id.btnScanQR);
+
+        // ── [TÍCH HỢP MỚI] ────────────────────────────────────────────────
+        btnPromotion = findViewById(R.id.btnPromotion);
+
+        bottomNav    = findViewById(R.id.bottomNav);
         rvRecentTransactions = findViewById(R.id.rvRecentTransactions);
 
         transactionList = new ArrayList<>();
         transactionAdapter = new TransactionAdapter(this, transactionList);
-
         rvRecentTransactions.setLayoutManager(new LinearLayoutManager(this));
         rvRecentTransactions.setAdapter(transactionAdapter);
 
-        // Load tên ngay lập tức từ SharePreferences cho nhanh
         String firstName = sharedPreferences.getString("firstName", "");
-        String lastName = sharedPreferences.getString("lastName", "");
+        String lastName  = sharedPreferences.getString("lastName",  "");
         tvUserName.setText("Xin chào, " + firstName + " " + lastName);
     }
 
     private void setupListeners() {
-        btnSend.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, TransferActivity.class)));
-        btnReceive.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, TopUpActivity.class)));
-        btnHistory.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, TransactionHistoryActivity.class)));
+        btnSend.setOnClickListener(v ->
+                startActivity(new Intent(this, TransferActivity.class)));
+        btnReceive.setOnClickListener(v ->
+                startActivity(new Intent(this, TopUpActivity.class)));
+        btnHistory.setOnClickListener(v ->
+                startActivity(new Intent(this, TransactionHistoryActivity.class)));
         btnScanQR.setOnClickListener(v -> startQrScanner());
+
+        // ── [TÍCH HỢP MỚI] Mở màn hình Ưu đãi ──────────────────────────
+        if (btnPromotion != null) {
+            btnPromotion.setOnClickListener(v ->
+                    startActivity(new Intent(this, PromotionActivity.class)));
+        }
 
         bottomNav.setOnItemSelectedListener(this::onNavigationItemSelected);
     }
@@ -388,138 +405,115 @@ public class MainActivity extends AppCompatActivity {
     private boolean onNavigationItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.nav_home) return true;
         if (item.getItemId() == R.id.nav_notification) {
-            startActivity(new Intent(MainActivity.this, NotificationActivity.class));
+            startActivity(new Intent(this, NotificationActivity.class));
             return true;
         }
         if (item.getItemId() == R.id.nav_statistics) {
-            startActivity(new Intent(MainActivity.this, StatisticsActivity.class));
+            startActivity(new Intent(this, StatisticsActivity.class));
             return true;
         }
         if (item.getItemId() == R.id.nav_profile) {
-            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+            startActivity(new Intent(this, ProfileActivity.class));
             return true;
         }
         return false;
     }
 
-    // =========================================================
-    // FIREBASE: LẮNG NGHE SỐ DƯ TÀI KHOẢN (REALTIME)
-    // =========================================================
     private void listenToUserData() {
-        // addSnapshotListener giúp tự động cập nhật UI mỗi khi balance thay đổi trên server
-        db.collection("users").document(userPhone).addSnapshotListener((snapshot, error) -> {
-            if (error != null || snapshot == null || !snapshot.exists()) return;
-
-            Double balance = snapshot.getDouble("balance");
-            if (balance != null) {
-                currentBalance = balance;
-                tvBalance.setText(currencyFormat.format(currentBalance));
-
-                // Lưu lại bộ nhớ đệm
-                sharedPreferences.edit().putFloat("balance", (float) currentBalance).apply();
-            }
-        });
+        db.collection("users").document(userPhone)
+                .addSnapshotListener((snapshot, error) -> {
+                    if (error != null || snapshot == null || !snapshot.exists()) return;
+                    Double balance = snapshot.getDouble("balance");
+                    if (balance != null) {
+                        currentBalance = balance;
+                        tvBalance.setText(currencyFormat.format(currentBalance));
+                        sharedPreferences.edit()
+                                .putFloat("balance", (float) currentBalance).apply();
+                    }
+                });
     }
 
-    // =========================================================
-    // FIREBASE: LẮNG NGHE GIAO DỊCH & TÍNH TỔNG THU/CHI
-    // =========================================================
     private void listenToRecentTransactions() {
         db.collection("transactions")
                 .whereEqualTo("userPhone", userPhone)
                 .addSnapshotListener((querySnapshot, error) -> {
                     if (error != null || querySnapshot == null) return;
 
-                    List<Transaction> tempAllList = new ArrayList<>();
-                    double tIncome = 0;
+                    List<Transaction> tempList = new ArrayList<>();
+                    double tIncome  = 0;
                     double tExpense = 0;
 
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                        String type = doc.getString("type");
+                        String type   = doc.getString("type");
                         Double amount = doc.getDouble("amount");
-                        String desc = doc.getString("description");
-                        String cat = doc.getString("category");
-                        String date = doc.getString("date");
+                        String desc   = doc.getString("description");
+                        String cat    = doc.getString("category");
+                        String date   = doc.getString("date");
 
                         if (type == null || amount == null) continue;
 
-                        // Tạo object Transaction (dùng hashCode tạm để làm ID integer)
                         int dummyId = doc.getId().hashCode();
-                        Transaction t = new Transaction(dummyId, 0, type, amount, desc, cat, date);
-                        tempAllList.add(t);
+                        tempList.add(new Transaction(dummyId, 0, type, amount, desc, cat, date));
 
-                        // Tính tổng thu / chi
-                        if (type.equals("INCOME") || type.equals("DEPOSIT")) {
-                            tIncome += amount;
-                        } else if (type.equals("EXPENSE") || type.equals("WITHDRAW") || type.equals("TRANSFER")) {
+                        if (type.equals("INCOME") || type.equals("DEPOSIT"))
+                            tIncome  += amount;
+                        else if (type.equals("EXPENSE") || type.equals("WITHDRAW")
+                                || type.equals("TRANSFER"))
                             tExpense += amount;
-                        }
                     }
 
-                    // Sắp xếp danh sách theo ngày tháng giảm dần (Mới nhất lên đầu)
-                    tempAllList.sort((t1, t2) -> {
-                        if (t1.getTransactionDate() == null || t2.getTransactionDate() == null) return 0;
-                        return t2.getTransactionDate().compareTo(t1.getTransactionDate());
+                    tempList.sort((t1, t2) -> {
+                        if (t1.getTransactionDate() == null
+                                || t2.getTransactionDate() == null) return 0;
+                        return t2.getTransactionDate()
+                                .compareTo(t1.getTransactionDate());
                     });
 
-                    // Cập nhật UI Tổng Thu / Chi
-                    tvTotalIncome.setText("+" + currencyFormat.format(tIncome));
+                    tvTotalIncome.setText("+"  + currencyFormat.format(tIncome));
                     tvTotalExpense.setText("-" + currencyFormat.format(tExpense));
 
-                    // Chỉ lấy 5 giao dịch gần nhất
                     transactionList.clear();
-                    for (int i = 0; i < Math.min(5, tempAllList.size()); i++) {
-                        transactionList.add(tempAllList.get(i));
-                    }
+                    for (int i = 0; i < Math.min(5, tempList.size()); i++)
+                        transactionList.add(tempList.get(i));
                     transactionAdapter.notifyDataSetChanged();
                 });
     }
 
     private void navigateToLogin() {
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }
 
-    // =============================== QR CODE ===============================
-
+    // ─── QR ──────────────────────────────────────────────────────────────────
     private void checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
         }
     }
 
-//    private void startQrScanner() {
-//        IntentIntegrator integrator = new IntentIntegrator(this);
-//        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-//        integrator.setPrompt("Đưa mã QR vào khung hình");
-//        integrator.setBeepEnabled(true);
-//        integrator.setBarcodeImageEnabled(false);
-//        integrator.initiateScan();
-//    }
-private void startQrScanner() {
-    IntentIntegrator integrator = new IntentIntegrator(this);
-
-    // GỌI GIAO DIỆN CUSTOM CỦA BẠN
-    integrator.setCaptureActivity(CustomScannerActivity.class);
-
-    integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-    integrator.setPrompt(""); // Xóa dòng chữ mặc định đi vì ta đã thiết kế riêng
-    integrator.setOrientationLocked(true); // Khóa xoay màn hình
-    integrator.setBeepEnabled(true);
-    integrator.initiateScan();
-}
+    private void startQrScanner() {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setCaptureActivity(CustomScannerActivity.class);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+        integrator.setPrompt("");
+        integrator.setOrientationLocked(true);
+        integrator.setBeepEnabled(true);
+        integrator.initiateScan();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        IntentResult result =
+                IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
-            if (result.getContents() == null) {
+            if (result.getContents() == null)
                 Toast.makeText(this, "Đã hủy quét mã QR", Toast.LENGTH_SHORT).show();
-            } else {
+            else
                 handleQrContent(result.getContents());
-            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -527,23 +521,18 @@ private void startQrScanner() {
 
     private void handleQrContent(String qr) {
         try {
-            // Định dạng QR mới cho Firebase: EWALLET|Số Điện Thoại|Họ Tên
             String[] parts = qr.split("\\|");
-
             if (parts.length < 3 || !parts[0].equals("EWALLET")) {
                 Toast.makeText(this, "Mã QR không hợp lệ!", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             String phone = parts[1];
-            String name = parts[2];
-
-            Intent i = new Intent(MainActivity.this, TransferConfirmActivity.class);
-            i.putExtra("recipientPhone", phone);
-            i.putExtra("recipientName", name);
-            i.putExtra("currentBalance", currentBalance);
+            String name  = parts[2];
+            Intent i = new Intent(this, TransferConfirmActivity.class);
+            i.putExtra("recipientPhone",   phone);
+            i.putExtra("recipientName",    name);
+            i.putExtra("currentBalance",   currentBalance);
             startActivity(i);
-
         } catch (Exception e) {
             Toast.makeText(this, "Lỗi đọc QR!", Toast.LENGTH_SHORT).show();
         }

@@ -81,6 +81,26 @@
             android:name=".CustomScannerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+
+        <activity
+            android:name=".PromotionActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"/>
+
+        <activity
+            android:name=".VoucherActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"/>
+
+        <activity
+            android:name=".PointsActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"/>
+
+        <activity
+            android:name=".NewUserBonusActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"/>
     </application>
 
 </manifest>
