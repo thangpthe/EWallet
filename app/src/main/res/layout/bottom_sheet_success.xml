@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="32dp"
+    android:background="@android:color/white">
+
+    <!-- Handle bar -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:background="#E0E0E0"
+        android:backgroundTint="#E0E0E0" />
+
+    <!-- Icon + Title -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="16dp"
+        android:paddingHorizontal="24dp">
+
+        <!-- Vòng tròn icon -->
+        <FrameLayout
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:layout_gravity="center">
+            <View
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:background="@drawable/circle_success"
+                android:alpha="0.15"/>
+            <TextView
+                android:id="@+id/tvSuccessIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="✅"
+                android:textSize="36sp"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvSuccessTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Giao dịch thành công!"
+            android:textColor="#0D0F3C"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvSuccessSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Giao dịch đã được xử lý"
+            android:textColor="#5C6094"
+            android:textSize="13sp"/>
+
+        <!-- Số tiền nổi bật -->
+        <TextView
+            android:id="@+id/tvSuccessAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="0đ"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#00C48C"/>
+
+    </LinearLayout>
+
+    <!-- Chi tiết giao dịch -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        app:cardBackgroundColor="#F8F9FF"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeColor="#EEF0FF"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Row 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <TextView
+                    android:id="@+id/tvRowLabel1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Người nhận"
+                    android:textColor="#5C6094"
+                    android:textSize="13sp"/>
+                <TextView
+                    android:id="@+id/tvRowValue1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textColor="#0D0F3C"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:maxWidth="200dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"/>
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#EEF0FF"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Row 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <TextView
+                    android:id="@+id/tvRowLabel2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Thời gian"
+                    android:textColor="#5C6094"
+                    android:textSize="13sp"/>
+                <TextView
+                    android:id="@+id/tvRowValue2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textColor="#0D0F3C"
+                    android:textSize="13sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <!-- Row 3 (ẩn nếu không cần) -->
+            <LinearLayout
+                android:id="@+id/layoutRow3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+                <!-- Divider -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#EEF0FF"
+                        android:layout_marginBottom="12dp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tvRowLabel3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Phân loại"
+                            android:textColor="#5C6094"
+                            android:textSize="13sp"/>
+                        <TextView
+                            android:id="@+id/tvRowValue3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textColor="#0D0F3C"
+                            android:textSize="13sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Banner ưu đãi / điểm thưởng -->
+    <LinearLayout
+        android:id="@+id/layoutBonus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="12dp"
+        android:background="#FFF8E7"
+        android:padding="14dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvBonusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⭐  Bạn vừa tích được điểm!"
+            android:textColor="#B45309"
+            android:textSize="13sp"
+            android:lineSpacingExtra="2dp"/>
+    </LinearLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="20dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNewTransaction"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Giao dịch mới"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"
+            app:backgroundTint="#3D5AFE"
+            app:cornerRadius="28dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBackToHome"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Về trang chủ"
+            android:textColor="#3D5AFE"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:cornerRadius="28dp"
+            app:strokeColor="#3D5AFE"
+            app:strokeWidth="1dp"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,72 +1,81 @@
 package com.example.ewallet_thang;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.TextView;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.NumberFormat;
-import java.util.Locale;
-
+/**
+ * TransferSuccessActivity — KHÔNG CÒN LÀM MÀN HÌNH RIÊNG.
+ *
+ * Activity này chỉ còn để tương thích ngược với code cũ (nếu còn nơi nào
+ * gọi startActivity với TransferSuccessActivity). Nó sẽ đọc Intent extras
+ * và hiện SuccessBottomSheet rồi kết thúc.
+ *
+ * ─────────────────────────────────────────────────────────────────────────
+ * CÁCH DÙNG MỚI (trong TransferActivity, TopUpActivity, PaymentActivity):
+ *
+ *   SuccessBottomSheet sheet = SuccessBottomSheet.newInstance(
+ *       SuccessBottomSheet.TYPE_TRANSFER,  // TYPE_TOPUP / TYPE_PAYMENT
+ *       deductAmount,
+ *       recipientNameOrBankName,
+ *       dateString,
+ *       categoryLabel,           // null nếu là nạp tiền
+ *       pointsEarned,            // 0 nếu không có
+ *       isFirstTransaction       // true nếu giao dịch đầu tiên
+ *   );
+ *   sheet.setOnDismissListener(goHome -> {
+ *       if (goHome) {
+ *           startActivity(new Intent(this, MainActivity.class)
+ *               .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+ *       }
+ *       finish();
+ *   });
+ *   sheet.show(getSupportFragmentManager(), "success");
+ * ─────────────────────────────────────────────────────────────────────────
+ */
 public class TransferSuccessActivity extends AppCompatActivity {
-
-    private TextView tvRecipientName, tvAmount, tvDate, tvCategory;
-    private Button btnViewTransaction, btnBackToHome;
-    private NumberFormat currencyFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Layout tối giản — BottomSheet sẽ phủ lên
         setContentView(R.layout.activity_transfer_success);
 
-        currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        SharedPreferences prefs = getSharedPreferences("EWalletPrefs", MODE_PRIVATE);
+        String userPhone = prefs.getString("userPhone", "");
 
-        initViews();
-        loadTransferData();
-        setupListeners();
+        Intent intent       = getIntent();
+        String recipient    = intent.getStringExtra("recipientName");
+        double amount       = intent.getDoubleExtra("amount", 0);
+        String date         = intent.getStringExtra("date");
+        String category     = intent.getStringExtra("category");
+        long   points       = intent.getLongExtra("points", 0);
+        boolean isFirstTx   = intent.getBooleanExtra("isFirstTx", false);
 
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                navigateToMain();
+        // Xác định loại từ category
+        int type = SuccessBottomSheet.TYPE_TRANSFER;
+        if ("Nạp tiền".equals(category)) {
+            type = SuccessBottomSheet.TYPE_TOPUP;
+        }
+
+        SuccessBottomSheet sheet = SuccessBottomSheet.newInstance(
+                type,
+                amount,
+                recipient != null ? recipient : "",
+                date != null ? date : "",
+                category,
+                points,
+                isFirstTx
+        );
+        sheet.setOnDismissListener(goHome -> {
+            if (goHome) {
+                startActivity(new Intent(this, MainActivity.class)
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
+            finish();
         });
-    }
-
-    private void initViews() {
-        tvRecipientName = findViewById(R.id.tvRecipientName);
-        tvAmount = findViewById(R.id.tvAmount);
-        tvDate = findViewById(R.id.tvDate);
-        tvCategory = findViewById(R.id.tvCategory);
-        btnViewTransaction = findViewById(R.id.btnViewTransaction);
-        btnBackToHome = findViewById(R.id.btnBackToHome);
-    }
-
-    private void loadTransferData() {
-        Intent intent = getIntent();
-        String recipientName = intent.getStringExtra("recipientName");
-        double amount = intent.getDoubleExtra("amount", 0);
-        String date = intent.getStringExtra("date");
-        String category = intent.getStringExtra("category");
-
-        tvRecipientName.setText("tới " + recipientName.toUpperCase());
-        tvAmount.setText(currencyFormat.format(amount));
-        tvDate.setText(date);
-        tvCategory.setText(category);
-    }
-
-    private void setupListeners() {
-        btnViewTransaction.setOnClickListener(v -> navigateToMain());
-        btnBackToHome.setOnClickListener(v -> navigateToMain());
-    }
-
-    private void navigateToMain() {
-        Intent intent = new Intent(TransferSuccessActivity.this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
+        sheet.show(getSupportFragmentManager(), "success");
     }
 }

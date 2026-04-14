@@ -385,8 +385,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
+//        btnSend.setOnClickListener(v ->
+//                startActivity(new Intent(this, TransferActivity.class)));
         btnSend.setOnClickListener(v ->
-                startActivity(new Intent(this, TransferActivity.class)));
+                startActivity(new Intent(this, PaymentActivity.class)));
         btnReceive.setOnClickListener(v ->
                 startActivity(new Intent(this, TopUpActivity.class)));
         btnHistory.setOnClickListener(v ->
