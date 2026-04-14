@@ -53,11 +53,6 @@
             android:theme="@style/Theme.EWallet_Thang" />
 
         <activity
-            android:name=".TopUpSuccessActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.EWallet_Thang" />
-
-        <activity
             android:name=".NotificationActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

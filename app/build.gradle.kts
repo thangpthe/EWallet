@@ -51,9 +51,14 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
 
-    // ================================
-    // 📌 Thư viện QUÉT QR ZXing — BẮT BUỘC PHẢI CÓ
-    // ================================
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-    implementation("com.google.zxing:core:3.4.1")
+    implementation("androidx.camera:camera-core:1.3.4")
+    implementation("androidx.camera:camera-camera2:1.3.4")
+    implementation("androidx.camera:camera-lifecycle:1.3.4")
+    implementation("androidx.camera:camera-view:1.3.4")
+
+    // ML Kit Barcode Scanning - AI nhận diện mã QR
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
+
+    // Guava (Cần thiết cho ListenableFuture của CameraX)
+    implementation("com.google.guava:guava:32.1.3-android")
 }
