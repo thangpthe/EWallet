@@ -580,7 +580,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int CAMERA_PERMISSION_CODE = 100;
 
     private TextView tvUserName, tvBalance, tvTotalIncome, tvTotalExpense;
-    private LinearLayout btnSend, btnReceive, btnScanQR, btnHistory;
+    private LinearLayout btnSend, btnReceive, btnScanQR, btnHistory,btnPromotion;
     private RecyclerView rvRecentTransactions;
     private BottomNavigationView bottomNav;
 
@@ -630,7 +630,7 @@ public class MainActivity extends AppCompatActivity {
         btnReceive = findViewById(R.id.btnReceive);
         btnScanQR = findViewById(R.id.btnScanQR);
         btnHistory = findViewById(R.id.btnHistory);
-
+        btnPromotion = findViewById(R.id.btnPromotion);
         rvRecentTransactions = findViewById(R.id.rvRecentTransactions);
         bottomNav = findViewById(R.id.bottomNav);
 
@@ -641,12 +641,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        btnSend.setOnClickListener(v -> startActivity(new Intent(this, TransferActivity.class)));
+        btnSend.setOnClickListener(v -> startActivity(new Intent(this, PaymentActivity.class)));
         btnReceive.setOnClickListener(v -> startActivity(new Intent(this, TopUpActivity.class)));
         btnHistory.setOnClickListener(v -> startActivity(new Intent(this, TransactionHistoryActivity.class)));
 
         // Gọi Scanner mới
         btnScanQR.setOnClickListener(v -> checkCameraPermission());
+        btnPromotion.setOnClickListener(v -> startActivity(new Intent(this, PromotionActivity.class)));
 
         bottomNav.setOnItemSelectedListener(this::onNavigationItemSelected);
     }
