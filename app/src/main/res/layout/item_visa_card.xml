@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="0dp">
+
+        <!-- Card visual band (gradient header) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="#3D5AFE"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="bottom">
+
+            <!-- Card chip icon -->
+            <TextView
+                android:layout_width="32dp"
+                android:layout_height="24dp"
+                android:background="#F5C842"
+                android:gravity="center"
+                android:text="◈"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvCardNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="**** **** **** 4242"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"/>
+
+                <TextView
+                    android:id="@+id/tvCardHolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="NGUYEN VAN A"
+                    android:textColor="#CCCFFF"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!-- Brand badge -->
+            <TextView
+                android:id="@+id/tvCardBrand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#20FFFFFF"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:text="VISA"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- Card details row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="14dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvCardExpiry"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Hết hạn: 12/27"
+                android:textColor="#5C6094"
+                android:textSize="13sp"/>
+
+            <!-- Buttons -->
+            <Button
+                android:id="@+id/btnSelectCard"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Chọn thẻ này"
+                android:textSize="12sp"
+                android:textColor="#3D5AFE"
+                android:backgroundTint="#EEF0FF"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                app:cornerRadius="8dp"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+            <Button
+                android:id="@+id/btnDeleteCard"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Xoá"
+                android:textSize="12sp"
+                android:textColor="#EF4444"
+                android:backgroundTint="@android:color/transparent"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -124,14 +124,15 @@
                             android:text="Số tiền"
                             android:textColor="@color/colorTextSecondary" />
 
-                        <TextView
-                            android:id="@+id/tvAmount"
+                        <EditText
+                            android:id="@+id/etAmount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="500.000 ₫"
+                            android:hint="Nhập số tiền"
                             android:textColor="@color/colorTextPrimary"
                             android:textSize="18sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:inputType="number"/>
                     </LinearLayout>
 
                     <View

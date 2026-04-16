@@ -365,7 +365,7 @@ public class CustomScannerActivity extends AppCompatActivity {
         stopLaserAnimation();
 
         // Hiện feedback thành công
-        runOnUiThread(() -> tvHint.setText("✅ Đã nhận diện mã QR!"));
+
 
         // Delay nhỏ để user thấy feedback rồi mới trả kết quả
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
