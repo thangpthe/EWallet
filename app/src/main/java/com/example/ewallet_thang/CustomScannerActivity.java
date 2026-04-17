@@ -200,7 +200,7 @@ public class CustomScannerActivity extends AppCompatActivity {
     private View        overlayTop, overlayBottom, overlayLeft, overlayRight;
     private ImageButton btnBack;
     private MaterialCardView btnFlash, btnGallery;
-    private TextView    tvHint;
+
 
     // ── CameraX ────────────────────────────────────────────────────────────────
     private ProcessCameraProvider cameraProvider;
@@ -260,7 +260,6 @@ public class CustomScannerActivity extends AppCompatActivity {
         btnBack       = findViewById(R.id.btnBack);
         btnFlash      = findViewById(R.id.btnFlash);
         btnGallery    = findViewById(R.id.btnGallery);
-//        tvHint        = findViewById(R.id.tvHint);
     }
 
     private void setupListeners() {
@@ -365,7 +364,6 @@ public class CustomScannerActivity extends AppCompatActivity {
         stopLaserAnimation();
 
         // Hiện feedback thành công
-        runOnUiThread(() -> tvHint.setText("✅ Đã nhận diện mã QR!"));
 
         // Delay nhỏ để user thấy feedback rồi mới trả kết quả
         new Handler(Looper.getMainLooper()).postDelayed(() -> {

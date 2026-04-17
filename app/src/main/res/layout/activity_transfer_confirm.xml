@@ -1,109 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground">
+    android:background="#F0F2FF">
 
+    <!-- ── Header ── -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:background="@color/colorSurface"
+        android:background="#3D5AFE"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_marginStart="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_back"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="10dp"
+            app:tint="@android:color/white"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Xác nhận giao dịch"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="18sp"
+            android:text="Xác nhận chuyển tiền"
+            android:textColor="@android:color/white"
+            android:textSize="17sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ScrollView
+    <!-- ── Scrollable content ── -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@id/bottomBar"
-        app:layout_constraintTop_toBottomOf="@id/header">
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="20dp">
 
+            <!-- ── Card 1: Thông tin người nhận ── -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/colorSurface"
+                app:cardBackgroundColor="@android:color/white"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
-                app:strokeColor="@color/colorDivider"
+                app:strokeColor="#EEF0FF"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="24dp">
+                    android:gravity="center"
+                    android:paddingTop="28dp"
+                    android:paddingBottom="24dp"
+                    android:paddingHorizontal="20dp">
 
+                    <!-- Avatar -->
                     <TextView
                         android:id="@+id/tvAvatar"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
                         android:background="@drawable/circle_avatar"
                         android:gravity="center"
                         android:text="A"
-                        android:textColor="@color/colorOnPrimary"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:textColor="@android:color/white"
+                        android:textSize="26sp"
+                        android:textStyle="bold"/>
 
+                    <!-- Tên người nhận -->
                     <TextView
                         android:id="@+id/tvRecipientName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="14dp"
                         android:text="NGUYEN VAN A"
-                        android:textColor="@color/colorTextPrimary"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:textColor="#0D0F3C"
+                        android:textSize="19sp"
+                        android:textStyle="bold"/>
 
+                    <!-- Label -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Ngân hàng thụ hưởng"
-                        android:textColor="@color/colorTextSecondary"
-                        android:textSize="14sp" />
+                        android:text="Người nhận"
+                        android:textColor="#8890B5"
+                        android:textSize="13sp"/>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- ── Card 2: Nhập số tiền + loại GD ── -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:cardBackgroundColor="@color/colorSurface"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@android:color/white"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
-                app:strokeColor="@color/colorDivider"
+                app:strokeColor="#EEF0FF"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -112,148 +125,191 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <LinearLayout
+                    <!-- Label số tiền -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Số tiền chuyển"
+                        android:textColor="#5C6094"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05"/>
+
+                    <!-- Input số tiền -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="8dp"
+                        app:suffixText="đ"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp">
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Số tiền"
-                            android:textColor="@color/colorTextSecondary" />
-
-                        <EditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etAmount"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Nhập số tiền"
-                            android:textColor="@color/colorTextPrimary"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:inputType="number"/>
-                    </LinearLayout>
+                            android:hint="0"
+                            android:inputType="number"
+                            android:padding="14dp"
+                            android:textSize="22sp"
+                            android:textStyle="bold"/>
+                    </com.google.android.material.textfield.TextInputLayout>
 
+                    <!-- Divider -->
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginVertical="16dp"
-                        android:background="@color/colorDivider" />
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="#EEF0FF"/>
 
+                    <!-- Label loại giao dịch -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Loại giao dịch"
+                        android:textColor="#5C6094"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05"
+                        android:layout_marginBottom="8dp"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                       />
+
+                    <!-- Phí giao dịch -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="16dp">
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Phí giao dịch"
-                            android:textColor="@color/colorTextSecondary" />
+                            android:textColor="#8890B5"
+                            android:textSize="13sp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Miễn phí"
-                            android:textColor="@color/colorSuccess"
-                            android:textStyle="bold" />
+                            android:textColor="#00C48C"
+                            android:textSize="13sp"
+                            android:textStyle="bold"/>
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="16dp"
-                        android:background="@color/colorDivider" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Loại giao dịch"
-                        android:textColor="@color/colorTextSecondary" />
-
-                    <Spinner
-                        android:id="@+id/spinnerCategory"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="8dp"
-                        />
                 </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginVertical="16dp"
-                    android:background="@color/colorDivider"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── Card 3: Voucher ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardVoucher"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#EEF0FF"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                    <TextView
-                        android:layout_width="0dp"
+                    <!-- Row: nhãn + nút chọn -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="🎟 Voucher giảm giá"
-                        android:textColor="@color/colorTextSecondary"
-                        android:textSize="14sp"/>
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
-                    <Button
-                        android:id="@+id/btnSelectVoucher"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:text="Chọn voucher"
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="🎟  Voucher giảm giá"
+                            android:textColor="#0D0F3C"
+                            android:textSize="14sp"
+                            android:textStyle="bold"/>
+
+                        <Button
+                            android:id="@+id/btnSelectVoucher"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:text="Chọn voucher"
+                            android:textSize="12sp"
+                            android:textColor="#3D5AFE"
+                            android:backgroundTint="@android:color/transparent"
+                            android:padding="0dp"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+                    </LinearLayout>
+
+                    <!-- Voucher badge (ẩn mặc định) -->
+                    <TextView
+                        android:id="@+id/tvVoucherApplied"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/badge_blue"
+                        android:padding="10dp"
+                        android:text=""
+                        android:textColor="#3D5AFE"
                         android:textSize="13sp"
-                        android:textColor="@color/colorPrimary"
-                        android:background="@android:color/transparent"
-                        android:padding="0dp"/>
+                        android:visibility="gone"/>
+
+                    <!-- Nút xóa voucher (ẩn mặc định) -->
+                    <Button
+                        android:id="@+id/btnRemoveVoucher"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Xóa voucher"
+                        android:textSize="12sp"
+                        android:textColor="#EF4444"
+                        android:backgroundTint="@android:color/transparent"
+                        android:padding="0dp"
+                        android:visibility="gone"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
                 </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tvVoucherApplied"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:padding="10dp"
-                    android:background="@drawable/badge_blue"
-                    android:text=""
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="13sp"
-                    android:visibility="gone"/>
-
-                <Button
-                    android:id="@+id/btnRemoveVoucher"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Xóa voucher"
-                    android:textSize="12sp"
-                    android:textColor="@color/colorError"
-                    android:background="@android:color/transparent"
-                    android:visibility="gone"/>
             </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-    </ScrollView>
 
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- ── Bottom CTA ── -->
     <LinearLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorSurface"
+        android:background="@android:color/white"
         android:elevation="8dp"
-        android:padding="24dp"
+        android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTransfer"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="XÁC NHẬN CHUYỂN"
+            android:layout_height="58dp"
+            android:text="Xác nhận chuyển"
+            android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:backgroundTint="@color/colorPrimary"
-            app:cornerRadius="24dp" />
+            app:backgroundTint="#3D5AFE"
+            app:cornerRadius="29dp"/>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
